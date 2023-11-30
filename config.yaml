@@ -1,0 +1,5 @@
+containername: debian 
+image: debian
+subnet: 172.17.0.1/16
+nunofvms: 3
+
