@@ -17,19 +17,10 @@ var (
 	port = flag.Int("port", 50051, "The server port")
 )
 
-// type Config struct {
-// 	Containername string `json:"containername"`
-// 	Image         string `json:"image"`
-// 	Subnet        string `json:"subnet"`
-// 	Nunofinstance int32  `json:"numofvms"`
-// }
-
-// server is used to implement helloworld.GreeterServer.
 type server struct {
 	pb.UnimplementedSendServer
 }
 
-// SayHello implements helloworld.GreeterServer
 func (s *server) Sendmsg(ctx context.Context, in *pb.Msg) (*pb.Resp, error) {
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %v", in.Containername, in.Image, in.Subnet, in.Nunofinstance)
 	//provision infra
