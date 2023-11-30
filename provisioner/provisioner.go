@@ -1,4 +1,4 @@
-package main
+package provisioner
 
 import (
 	"context"
@@ -13,7 +13,6 @@ import (
 )
 
 type Provisioner struct {
-	containerconfig *Config
 }
 type Config struct {
 	Containername string `json:"containername"`
@@ -72,12 +71,13 @@ func (P *Provisioner) ContainerProvisioner(config Config) {
 		// }
 	}
 }
-func main() {
-	var C Config
-	var P Provisioner
-	C.Containername = "khero"
-	C.Image = "ubuntu"
-	C.Nunofinstance = 3
-	P.ContainerProvisioner(C)
 
-}
+// func main() {
+// 	var C Config
+// 	var P Provisioner
+// 	C.Containername = "khero"
+// 	C.Image = "ubuntu"
+// 	C.Nunofinstance = 3
+// 	P.ContainerProvisioner(C)
+
+// }

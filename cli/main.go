@@ -57,7 +57,7 @@ func main() {
 	// if len(os.Args) > 1 {
 	// 	name = os.Args[1]
 	// }
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Second)
 	defer cancel()
 	r, err := c.Sendmsg(ctx, &pb.Msg{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Nunofinstance})
 	if err != nil {

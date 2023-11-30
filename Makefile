@@ -20,12 +20,12 @@ cli: buildcli
 	@ ./bin/main1
 
 build:
-	@go build  -o bin/main miniCloudCore/main.go
+	@sudo go build  -o bin/main miniCloudCore/main.go
 run: build
-	@ ./bin/main
+	@sudo  ./bin/main
 buildpr:
 	@sudo go build  -o bin/main2 provisioner/main.go
 provision: buildpr
-	@ ./bin/main2
+	@sudo  ./bin/main2
 
 
