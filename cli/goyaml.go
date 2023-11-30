@@ -14,7 +14,7 @@ type Config struct {
 	Nunofvms      string `json:"numofvms"`
 }
 
-func (C* Config) Goyaml(pathfile string) *Config {
+func (C *Config) Goyaml(pathfile string) *Config {
 	// read the output.yaml file
 	data, err := os.ReadFile(pathfile)
 

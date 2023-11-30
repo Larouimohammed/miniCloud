@@ -1,0 +1,21 @@
+// file: invoicer.proto
+syntax = "proto3";
+option go_package = "./proto/Message";
+
+message Msg {
+    string containername = 1;
+    string image = 2;
+    string subnet = 3;
+    string nunofvms = 4;
+  
+
+}
+
+message Resp {
+ string resp = 1;
+}
+
+service Send {
+  
+   rpc Sendmsg (Msg) returns  (stream Resp) {}
+}
