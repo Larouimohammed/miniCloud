@@ -5,7 +5,8 @@ import (
 )
 
 func main() {
-
-	fmt.Printf("CN = %+v\n", Goyaml("./config.yaml"))
+	var config Config
+	config.Goyaml("./config.yaml")
+	fmt.Printf("CN = %+v\n", config.Goyaml("./config.yaml"))
 
 }
