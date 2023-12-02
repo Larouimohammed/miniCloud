@@ -1,4 +1,4 @@
-containername: kherohost 
+containername: host 
 image: ubuntu
 subnet: 172.17.0.1/16
 nunofinstance: 8

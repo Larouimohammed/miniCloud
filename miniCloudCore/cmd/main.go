@@ -9,7 +9,11 @@ import (
 var Server *server.Server
 
 func main() {
-	server := Server.NewServer()
+
+	server, err := Server.NewServer()
+	if err == nil {
+		log.Printf(err.Error())
+	}
 	if err := server.Run(); err == nil {
 		log.Fatal(err)
 	}

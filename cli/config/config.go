@@ -25,7 +25,7 @@ func (C *Config) Goyaml(pathfile string) *Config {
 		if pathfile == "" {
 			data, err = os.ReadFile(DefaultPathFile)
 		}
-		log.Panicf("err")
+		log.Printf(err.Error())
 	}
 	// fmt.Printf("members = %#v\n", string(data))
 	var config Config

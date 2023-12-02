@@ -26,16 +26,16 @@ func main() {
 	}
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Printf("did not connect: %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewProvClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Timeout)*time.Second)
 	defer cancel()
-	r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Nunofinstance})
+	r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: 3})
 	if err != nil {
-		log.Fatalf("could not provisionning : %v", err)
+		log.Printf("could not provisionning : %v ", err)
 	}
 	log.Printf("Respending: %s", r.Resp)
 }
