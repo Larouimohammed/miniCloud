@@ -1,5 +1,4 @@
-containername: host 
+containername: hostname 
 image: ubuntu
 subnet: 172.17.0.1/16
-nunofinstance: 8
-
+replicas: 3

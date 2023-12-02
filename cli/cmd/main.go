@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	Address     = "localhost:50051"
-	Timeout     = 100
+	Address = "localhost:50051"
+	Timeout = 100
 )
 
 func main() {
 	var config *config.Config
-	config = config.Goyaml("config.yaml")
+	config = config.Goyaml("./config.yaml")
 	address := Address
 	if len(os.Args) > 1 {
 		address = os.Args[1]
@@ -32,7 +32,8 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Timeout)*time.Second)
 	defer cancel()
-	r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: 3})
+
+	r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas})
 	if err != nil {
 		log.Printf("could not provisionning : %v ", err)
 	}

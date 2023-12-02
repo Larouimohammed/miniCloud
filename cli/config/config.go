@@ -15,7 +15,7 @@ type Config struct {
 	Containername string `yaml:"containername"`
 	Image         string `yaml:"image"`
 	Subnet        string `yaml:"subnet"`
-	Nunofinstance int32  `yaml:"numofinstance"`
+	Replicas      int32  `yaml:"replicas"`
 }
 
 func (C *Config) Goyaml(pathfile string) *Config {
@@ -28,15 +28,11 @@ func (C *Config) Goyaml(pathfile string) *Config {
 		}
 		log.Printf(" marshal error : %v", err)
 	}
-	// fmt.Printf("members = %#v\n", string(data))
 	var config Config
 	databayte := []byte(data)
-	// dataconfig := make([]Config, 0)
 	err = yaml.Unmarshal([]byte(databayte), &config)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-
-	// fmt.Printf("members = %#v\n", config)
 	return &config
 }
