@@ -1,11 +1,13 @@
 package server
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
-	"github.com/Larouimohammed/miniCloud.git/miniCloud/"
+
+	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
 
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/client"
@@ -31,6 +33,14 @@ func (S *Server) NewServer() *Server {
 		dockerclient: cli,
 	}
 }
+
+func (s *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
+	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %v", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
+	//provision
+	command.ProvApply(*s.dockerclient, config.Containername, config.Image, config.Subnet, config.Nunofinstance)
+	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
+}
+
 func (S *Server) run() error {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
@@ -45,7 +55,6 @@ func (S *Server) run() error {
 		log.Fatalf("failed to serve: %v", err)
 		return err
 	}
-	
 
 	return nil
 }

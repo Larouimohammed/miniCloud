@@ -7,28 +7,27 @@ import (
 	"log"
 	"os"
 
-	"github.com/Larouimohammed/miniCloud.git/cli/config"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
-func ProvApply(cli client.Client, con config.Config) {
+func ProvApply(cli client.Client, containername string, image string, subnet string, numberofistance int32) {
 	ctx := context.Background()
-	reader, err := cli.ImagePull(ctx, con.Image, types.ImagePullOptions{})
+	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
 	defer reader.Close()
 	io.Copy(os.Stdout, reader)
-	for i := 0; i < int(con.Nunofinstance); i++ {
+	for i := 0; i < int(numberofistance); i++ {
 		resp, err := cli.ContainerCreate(ctx, &container.Config{
-			Hostname: con.Containername + fmt.Sprint(i),
-			Image:    con.Image,
+			Hostname: containername + fmt.Sprint(i),
+			Image:    image,
 			Cmd:      []string{"sleep", "10"},
 			Tty:      false,
-		}, nil, nil, nil, con.Containername+fmt.Sprint(i))
+		}, nil, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
 			log.Printf(err.Error())
 
