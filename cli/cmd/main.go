@@ -35,7 +35,7 @@ func main() {
 
 	r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas})
 	if err != nil {
-		log.Printf("could not provisionning : %v ", err)
+		log.Printf("Server can't provisionning : %v ", err)
 	}
 	log.Printf("Respending: %s", r.Resp)
 }

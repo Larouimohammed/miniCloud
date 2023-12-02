@@ -16,7 +16,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 	ctx := context.Background()
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
-		log.Printf(err.Error())
+		log.Printf("image pull error : %v", err)
 		return err
 	}
 
@@ -30,13 +30,13 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 			Tty:      false,
 		}, nil, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
-			log.Printf(err.Error())
+			log.Printf("create container failled : %v", err)
 			return err
 
 		}
 
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-			log.Printf(err.Error())
+			log.Printf("start container failled: %v", err)
 			return err
 
 		}

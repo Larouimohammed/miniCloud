@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/client"
 	"google.golang.org/grpc"
@@ -36,12 +37,11 @@ func (S *Server) NewServer() (*Server, error) {
 
 func (s *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %d", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
-	log.Printf("Respending: %d", config.Nunofinstance)
-	//provisioning
-	// if err := command.ProvApply(s.dockerclient, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
-	// 	log.Printf(" provisionning error : %v", err)
-	// 	return &pb.Resp{Resp: "we are sorry"}, err
-	// }
+	// provisioning
+	if err := command.ProvApply(s.dockerclient, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
+		log.Printf(" provisionning error : %v", err)
+		return &pb.Resp{Resp: "we are sorry"}, err
+	}
 	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
 }
 
