@@ -21,7 +21,8 @@ func ProvApply(cli client.Client, containername string, image string, subnet str
 
 	defer reader.Close()
 	io.Copy(os.Stdout, reader)
-	for i := 0; i < int(numberofistance); i++ {
+	// int(numberofistance)
+	for i := 0; i < 3; i++ {
 		resp, err := cli.ContainerCreate(ctx, &container.Config{
 			Hostname: containername + fmt.Sprint(i),
 			Image:    image,

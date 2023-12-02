@@ -2,7 +2,7 @@
 syntax = "proto3";
 option go_package = "./proto/Message";
 
-message Msg {
+message Req {
     string containername = 1;
     string image = 2;
     string subnet = 3;
@@ -14,7 +14,7 @@ message Resp {
  string resp = 1;
 }
 
-service Send {
+service Prov {
   
-   rpc Sendmsg (Msg) returns  (Resp) {}
+   rpc apply (Req) returns  (Resp) {}
 }

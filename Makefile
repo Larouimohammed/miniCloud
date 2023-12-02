@@ -15,17 +15,17 @@ grpc :
 		--go-grpc_opt=paths=source_relative\
 		--proto_path=.
 buildcli:
-	@go build  -o bin/main1 cli/main.go
+	@go build  -o bin/cli cli/cmd/main.go
 cli: buildcli
-	@ ./bin/main1
+	@ ./bin/cli
 
 build:
-	@sudo go build  -o bin/main miniCloudCore/main.go
+	@sudo go build  -o bin/core miniCloudCore/cmd/main.go
 run: build
-	@sudo  ./bin/main
+	@sudo  ./bin/core
 buildpr:
-	@sudo go build  -o bin/main2 provisioner/main.go
+	@sudo go build  -o bin/prov provisioner/main.go
 provision: buildpr
-	@sudo  ./bin/main2
+	@sudo  ./bin/prov
 
 

@@ -18,86 +18,86 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// SendClient is the client API for Send service.
+// ProvClient is the client API for Prov service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SendClient interface {
-	Sendmsg(ctx context.Context, in *Msg, opts ...grpc.CallOption) (*Resp, error)
+type ProvClient interface {
+	Apply(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
 }
 
-type sendClient struct {
+type provClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSendClient(cc grpc.ClientConnInterface) SendClient {
-	return &sendClient{cc}
+func NewProvClient(cc grpc.ClientConnInterface) ProvClient {
+	return &provClient{cc}
 }
 
-func (c *sendClient) Sendmsg(ctx context.Context, in *Msg, opts ...grpc.CallOption) (*Resp, error) {
+func (c *provClient) Apply(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error) {
 	out := new(Resp)
-	err := c.cc.Invoke(ctx, "/Send/Sendmsg", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Prov/apply", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// SendServer is the server API for Send service.
-// All implementations must embed UnimplementedSendServer
+// ProvServer is the server API for Prov service.
+// All implementations must embed UnimplementedProvServer
 // for forward compatibility
-type SendServer interface {
-	Sendmsg(context.Context, *Msg) (*Resp, error)
-	mustEmbedUnimplementedSendServer()
+type ProvServer interface {
+	Apply(context.Context, *Req) (*Resp, error)
+	mustEmbedUnimplementedProvServer()
 }
 
-// UnimplementedSendServer must be embedded to have forward compatible implementations.
-type UnimplementedSendServer struct {
+// UnimplementedProvServer must be embedded to have forward compatible implementations.
+type UnimplementedProvServer struct {
 }
 
-func (UnimplementedSendServer) Sendmsg(context.Context, *Msg) (*Resp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Sendmsg not implemented")
+func (UnimplementedProvServer) Apply(context.Context, *Req) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Apply not implemented")
 }
-func (UnimplementedSendServer) mustEmbedUnimplementedSendServer() {}
+func (UnimplementedProvServer) mustEmbedUnimplementedProvServer() {}
 
-// UnsafeSendServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SendServer will
+// UnsafeProvServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProvServer will
 // result in compilation errors.
-type UnsafeSendServer interface {
-	mustEmbedUnimplementedSendServer()
+type UnsafeProvServer interface {
+	mustEmbedUnimplementedProvServer()
 }
 
-func RegisterSendServer(s grpc.ServiceRegistrar, srv SendServer) {
-	s.RegisterService(&Send_ServiceDesc, srv)
+func RegisterProvServer(s grpc.ServiceRegistrar, srv ProvServer) {
+	s.RegisterService(&Prov_ServiceDesc, srv)
 }
 
-func _Send_Sendmsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Msg)
+func _Prov_Apply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Req)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SendServer).Sendmsg(ctx, in)
+		return srv.(ProvServer).Apply(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Send/Sendmsg",
+		FullMethod: "/Prov/apply",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SendServer).Sendmsg(ctx, req.(*Msg))
+		return srv.(ProvServer).Apply(ctx, req.(*Req))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Send_ServiceDesc is the grpc.ServiceDesc for Send service.
+// Prov_ServiceDesc is the grpc.ServiceDesc for Prov service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Send_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "Send",
-	HandlerType: (*SendServer)(nil),
+var Prov_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Prov",
+	HandlerType: (*ProvServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Sendmsg",
-			Handler:    _Send_Sendmsg_Handler,
+			MethodName: "apply",
+			Handler:    _Prov_Apply_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
