@@ -1,52 +1,17 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"fmt"
 	"log"
-	"net"
 
-	"github.com/Larouimohammed/miniCloud.git/provisioner"
-
-	pb "github.com/Larouimohammed/miniCloud.git/proto"
-	"google.golang.org/grpc"
+	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/server"
 )
 
-var (
-	port = flag.Int("port", 50051, "The server port")
-)
-
-type server struct {
-	pb.UnimplementedProvServer
-}
-
-// lok if sENDMSG WORK
-func (s *server) Apply(ctx context.Context, in *pb.Req) (*pb.Resp, error) {
-	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %v", in.Containername, in.Image, in.Subnet, in.Nunofinstance)
-	//provision infra
-
-	var config provisioner.Config
-	var P provisioner.Provisioner
-	config.Containername = in.Containername
-	config.Image = in.Image
-	config.Subnet = in.Subnet
-	config.Nunofinstance = in.Nunofinstance
-	P.ContainerProvisioner(config)
-
-	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
-}
+var Server *server.Server
 
 func main() {
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	server := Server.NewServer()
+	if err := server.Run(); err == nil {
+		log.Fatal(err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterProvServer(s, &server{})
-	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+
 }

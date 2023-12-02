@@ -32,6 +32,7 @@ func (S *Server) NewServer() *Server {
 	return &Server{
 		dockerclient: cli,
 	}
+
 }
 
 func (s *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
@@ -41,7 +42,7 @@ func (s *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
 }
 
-func (S *Server) run() error {
+func (S *Server) Run() error {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
