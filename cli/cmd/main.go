@@ -13,7 +13,6 @@ import (
 
 var (
 	Address     = "localhost:50051"
-	DefaultName = "world"
 	Timeout     = 100
 )
 

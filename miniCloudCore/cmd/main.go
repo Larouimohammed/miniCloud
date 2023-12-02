@@ -11,10 +11,11 @@ var Server *server.Server
 func main() {
 
 	server, err := Server.NewServer()
-	if err == nil {
-		log.Printf(err.Error())
+	if err != nil {
+		log.Printf("Server initialisation : %v", err)
+
 	}
-	if err := server.Run(); err == nil {
+	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}
 

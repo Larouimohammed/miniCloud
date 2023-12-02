@@ -8,7 +8,6 @@ import (
 	"net"
 
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
-
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/client"
 	"google.golang.org/grpc"
@@ -26,10 +25,10 @@ type Server struct {
 func (S *Server) NewServer() (*Server, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		log.Printf(err.Error())
+		log.Printf(" initialisation docker client error : %v", err)
 		return nil, err
 	}
-	// defer cli.Close()
+	defer cli.Close()
 	return &Server{
 		dockerclient: cli,
 	}, nil
@@ -40,7 +39,7 @@ func (s *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %v", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
 	//provisioning
 	if err := command.ProvApply(s.dockerclient, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
-		log.Printf("err")
+		log.Printf(" provisionning error : %v", err)
 		return &pb.Resp{Resp: "we are sorry"}, err
 	}
 	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
