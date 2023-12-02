@@ -18,10 +18,11 @@ var (
 )
 
 type server struct {
-	pb.UnimplementedSendServer
+	pb.UnimplementedProvServer
 }
 
-func (s *server) Sendmsg(ctx context.Context, in *pb.Msg) (*pb.Resp, error) {
+// lok if sENDMSG WORK
+func (s *server) Apply(ctx context.Context, in *pb.Req) (*pb.Resp, error) {
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %v", in.Containername, in.Image, in.Subnet, in.Nunofinstance)
 	//provision infra
 
@@ -31,7 +32,7 @@ func (s *server) Sendmsg(ctx context.Context, in *pb.Msg) (*pb.Resp, error) {
 	config.Image = in.Image
 	config.Subnet = in.Subnet
 	config.Nunofinstance = in.Nunofinstance
-    P.ContainerProvisioner(config)
+	P.ContainerProvisioner(config)
 
 	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
 }
@@ -43,7 +44,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterSendServer(s, &server{})
+	pb.RegisterProvServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
