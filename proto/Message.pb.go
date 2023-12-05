@@ -148,6 +148,53 @@ func (x *DReq) GetNunofinstance() int32 {
 	return 0
 }
 
+type WReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Containername string `protobuf:"bytes,1,opt,name=containername,proto3" json:"containername,omitempty"`
+}
+
+func (x *WReq) Reset() {
+	*x = WReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_Message_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *WReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WReq) ProtoMessage() {}
+
+func (x *WReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_Message_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WReq.ProtoReflect.Descriptor instead.
+func (*WReq) Descriptor() ([]byte, []int) {
+	return file_proto_Message_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *WReq) GetContainername() string {
+	if x != nil {
+		return x.Containername
+	}
+	return ""
+}
+
 type Resp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -159,7 +206,7 @@ type Resp struct {
 func (x *Resp) Reset() {
 	*x = Resp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_Message_proto_msgTypes[2]
+		mi := &file_proto_Message_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -172,7 +219,7 @@ func (x *Resp) String() string {
 func (*Resp) ProtoMessage() {}
 
 func (x *Resp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_Message_proto_msgTypes[2]
+	mi := &file_proto_Message_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -185,7 +232,7 @@ func (x *Resp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Resp.ProtoReflect.Descriptor instead.
 func (*Resp) Descriptor() ([]byte, []int) {
-	return file_proto_Message_proto_rawDescGZIP(), []int{2}
+	return file_proto_Message_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Resp) GetResp() string {
@@ -193,6 +240,53 @@ func (x *Resp) GetResp() string {
 		return x.Resp
 	}
 	return ""
+}
+
+type WResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Wresp int32 `protobuf:"varint,1,opt,name=wresp,proto3" json:"wresp,omitempty"`
+}
+
+func (x *WResp) Reset() {
+	*x = WResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_Message_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *WResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WResp) ProtoMessage() {}
+
+func (x *WResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_Message_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WResp.ProtoReflect.Descriptor instead.
+func (*WResp) Descriptor() ([]byte, []int) {
+	return file_proto_Message_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *WResp) GetWresp() int32 {
+	if x != nil {
+		return x.Wresp
+	}
+	return 0
 }
 
 var File_proto_Message_proto protoreflect.FileDescriptor
@@ -212,12 +306,20 @@ var file_proto_Message_proto_rawDesc = []byte{
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72,
 	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x24, 0x0a, 0x0d, 0x6e, 0x75, 0x6e, 0x6f, 0x66, 0x69, 0x6e, 0x73,
 	0x74, 0x61, 0x6e, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x6e, 0x75, 0x6e,
-	0x6f, 0x66, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x22, 0x1a, 0x0a, 0x04, 0x52, 0x65,
-	0x73, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x72, 0x65, 0x73, 0x70, 0x32, 0x36, 0x0a, 0x04, 0x50, 0x72, 0x6f, 0x76, 0x12, 0x16,
-	0x0a, 0x05, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x12, 0x04, 0x2e, 0x52, 0x65, 0x71, 0x1a, 0x05, 0x2e,
-	0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x16, 0x0a, 0x04, 0x64, 0x72, 0x6f, 0x70, 0x12, 0x05,
-	0x2e, 0x44, 0x52, 0x65, 0x71, 0x1a, 0x05, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x42, 0x11,
+	0x6f, 0x66, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x22, 0x2c, 0x0a, 0x04, 0x57, 0x52,
+	0x65, 0x71, 0x12, 0x24, 0x0a, 0x0d, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x6f, 0x6e, 0x74, 0x61,
+	0x69, 0x6e, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x1a, 0x0a, 0x04, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x12, 0x0a, 0x04, 0x72, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x72, 0x65, 0x73, 0x70, 0x22, 0x1d, 0x0a, 0x05, 0x57, 0x52, 0x65, 0x73, 0x70, 0x12, 0x14, 0x0a,
+	0x05, 0x77, 0x72, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x77, 0x72,
+	0x65, 0x73, 0x70, 0x32, 0x69, 0x0a, 0x04, 0x50, 0x72, 0x6f, 0x76, 0x12, 0x16, 0x0a, 0x05, 0x61,
+	0x70, 0x70, 0x6c, 0x79, 0x12, 0x04, 0x2e, 0x52, 0x65, 0x71, 0x1a, 0x05, 0x2e, 0x52, 0x65, 0x73,
+	0x70, 0x22, 0x00, 0x12, 0x16, 0x0a, 0x04, 0x64, 0x72, 0x6f, 0x70, 0x12, 0x05, 0x2e, 0x44, 0x52,
+	0x65, 0x71, 0x1a, 0x05, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x17, 0x0a, 0x06, 0x75,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x04, 0x2e, 0x52, 0x65, 0x71, 0x1a, 0x05, 0x2e, 0x52, 0x65,
+	0x73, 0x70, 0x22, 0x00, 0x12, 0x18, 0x0a, 0x05, 0x77, 0x61, 0x74, 0x63, 0x68, 0x12, 0x05, 0x2e,
+	0x57, 0x52, 0x65, 0x71, 0x1a, 0x06, 0x2e, 0x57, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x42, 0x11,
 	0x5a, 0x0f, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
 	0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
@@ -234,19 +336,25 @@ func file_proto_Message_proto_rawDescGZIP() []byte {
 	return file_proto_Message_proto_rawDescData
 }
 
-var file_proto_Message_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_proto_Message_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_Message_proto_goTypes = []interface{}{
-	(*Req)(nil),  // 0: Req
-	(*DReq)(nil), // 1: DReq
-	(*Resp)(nil), // 2: Resp
+	(*Req)(nil),   // 0: Req
+	(*DReq)(nil),  // 1: DReq
+	(*WReq)(nil),  // 2: WReq
+	(*Resp)(nil),  // 3: Resp
+	(*WResp)(nil), // 4: WResp
 }
 var file_proto_Message_proto_depIdxs = []int32{
 	0, // 0: Prov.apply:input_type -> Req
 	1, // 1: Prov.drop:input_type -> DReq
-	2, // 2: Prov.apply:output_type -> Resp
-	2, // 3: Prov.drop:output_type -> Resp
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	0, // 2: Prov.update:input_type -> Req
+	2, // 3: Prov.watch:input_type -> WReq
+	3, // 4: Prov.apply:output_type -> Resp
+	3, // 5: Prov.drop:output_type -> Resp
+	3, // 6: Prov.update:output_type -> Resp
+	4, // 7: Prov.watch:output_type -> WResp
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -283,7 +391,31 @@ func file_proto_Message_proto_init() {
 			}
 		}
 		file_proto_Message_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*WReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_Message_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Resp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_Message_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*WResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -301,7 +433,7 @@ func file_proto_Message_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_Message_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

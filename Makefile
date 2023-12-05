@@ -18,6 +18,8 @@ apply:
 	@ go run cli/cmd/main.go apply
 drop: 
 	@ go run cli/cmd/main.go drop
+update: 
+	@ go run cli/cmd/main.go update
 build:
 	@sudo go build  -o bin/core miniCloudCore/cmd/main.go
 run: build

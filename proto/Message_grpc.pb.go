@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type ProvClient interface {
 	Apply(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
 	Drop(ctx context.Context, in *DReq, opts ...grpc.CallOption) (*Resp, error)
+	Update(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
+	Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (*WResp, error)
 }
 
 type provClient struct {
@@ -52,12 +54,32 @@ func (c *provClient) Drop(ctx context.Context, in *DReq, opts ...grpc.CallOption
 	return out, nil
 }
 
+func (c *provClient) Update(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/Prov/update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provClient) Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (*WResp, error) {
+	out := new(WResp)
+	err := c.cc.Invoke(ctx, "/Prov/watch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProvServer is the server API for Prov service.
 // All implementations must embed UnimplementedProvServer
 // for forward compatibility
 type ProvServer interface {
 	Apply(context.Context, *Req) (*Resp, error)
 	Drop(context.Context, *DReq) (*Resp, error)
+	Update(context.Context, *Req) (*Resp, error)
+	Watch(context.Context, *WReq) (*WResp, error)
 	mustEmbedUnimplementedProvServer()
 }
 
@@ -70,6 +92,12 @@ func (UnimplementedProvServer) Apply(context.Context, *Req) (*Resp, error) {
 }
 func (UnimplementedProvServer) Drop(context.Context, *DReq) (*Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Drop not implemented")
+}
+func (UnimplementedProvServer) Update(context.Context, *Req) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedProvServer) Watch(context.Context, *WReq) (*WResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Watch not implemented")
 }
 func (UnimplementedProvServer) mustEmbedUnimplementedProvServer() {}
 
@@ -120,6 +148,42 @@ func _Prov_Drop_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Prov_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Req)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Prov/update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvServer).Update(ctx, req.(*Req))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Prov_Watch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvServer).Watch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Prov/watch",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvServer).Watch(ctx, req.(*WReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Prov_ServiceDesc is the grpc.ServiceDesc for Prov service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var Prov_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "drop",
 			Handler:    _Prov_Drop_Handler,
+		},
+		{
+			MethodName: "update",
+			Handler:    _Prov_Update_Handler,
+		},
+		{
+			MethodName: "watch",
+			Handler:    _Prov_Watch_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

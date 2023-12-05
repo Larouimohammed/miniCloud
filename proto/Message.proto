@@ -14,13 +14,22 @@ message DReq {
     int32  nunofinstance = 2;
 
 }
+message WReq {
+    string containername = 1;
 
+}
 message Resp {
  string resp = 1;
 }
+message WResp {
+    int32 wresp = 1;
+   }
 
 service Prov {
    rpc apply (Req) returns  (Resp) {}
    rpc drop (DReq) returns  (Resp) {}
+   rpc update (Req) returns  (Resp) {}
+   rpc watch (WReq) returns  (WResp) {}
+
 
 }

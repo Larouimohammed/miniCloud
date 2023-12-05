@@ -41,10 +41,26 @@ func main() {
 	}
 	if os.Args[1] == "drop" {
 
-		d, err := c.Drop(ctx, &pb.DReq{Containername: config.Containername,Nunofinstance: config.Replicas})
+		d, err := c.Drop(ctx, &pb.DReq{Containername: config.Containername, Nunofinstance: config.Replicas})
 		if err != nil {
 			log.Printf("Server can't Drop infra  : %v ", err)
 		}
 		log.Printf("Respending: %s", d.Resp)
+	}
+	if os.Args[1] == "update" {
+
+		u, err := c.Update(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas})
+		if err != nil {
+			log.Printf("Server can't Update infra  : %v ", err)
+		}
+		log.Printf("Respending: %s", u.Resp)
+	}
+	if os.Args[1] == "watch" {
+
+		u, err := c.Watch(ctx, &pb.WReq{Containername: config.Containername})
+		if err != nil {
+			log.Printf("Server can't Update infra  : %v ", err)
+		}
+		log.Printf("Respending: %d", u.Wresp)
 	}
 }

@@ -37,7 +37,7 @@ func (S *Server) NewServer() (*Server, error) {
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
-	log.Printf("Provisionning Starting")
+	log.Printf("Provisionning infra Starting")
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %d", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
 		log.Printf(" provisionning error : %v", err)
@@ -48,7 +48,7 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 
 // droping
 func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
-	log.Printf("Droping Starting")
+	log.Printf("Droping infra Starting")
 	log.Printf("Droping CN: %v Numofinstance %d", config.Containername, config.Nunofinstance)
 
 	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
@@ -59,6 +59,26 @@ func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 }
 
 // watching
+
+func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
+	log.Printf("Updating infra Starting")
+	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
+		log.Printf(" droping infra  error : %v", err)
+	}
+	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
+		log.Printf(" provisionning error : %v", err)
+		return &pb.Resp{Resp: "provisionning infra error"}, err
+	}
+
+	return &pb.Resp{Resp: "your infra was updated"}, nil
+
+}
+func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) {
+	log.Printf("Watching %v infra Starting", config.Containername)
+
+	return &pb.WResp{Wresp: int32(3)}, nil
+}
+
 // updating
 
 func (S *Server) Run() error {
