@@ -13,6 +13,13 @@ import (
 )
 
 func ProvApply(cli *client.Client, containername string, image string, subnet string, numberofistance int32) error {
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		log.Printf(" initialisation docker client error : %v", err)
+		return err
+	}
+	defer cli.Close()
+
 	ctx := context.Background()
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
