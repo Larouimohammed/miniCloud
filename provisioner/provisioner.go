@@ -72,12 +72,4 @@ func (P *Provisioner) ContainerProvisioner(config Config) {
 	}
 }
 
-// func main() {
-// 	var C Config
-// 	var P Provisioner
-// 	C.Containername = "khero"
-// 	C.Image = "ubuntu"
-// 	C.Nunofinstance = 3
-// 	P.ContainerProvisioner(C)
 
-// }
