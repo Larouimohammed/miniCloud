@@ -1,4 +1,4 @@
-containername: hostmycloud5
+containername: hostmy7
 image: ubuntu
 subnet: 172.17.0.1/16
-replicas: 5
+replicas: 3

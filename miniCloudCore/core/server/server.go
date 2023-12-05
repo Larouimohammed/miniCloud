@@ -75,8 +75,13 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 }
 func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) {
 	log.Printf("Watching %v infra Starting", config.Containername)
+	instance, err := command.Watching(S.cli, config.Containername)
+	if err != nil {
+		log.Printf("Watchinh error : %v", err)
+		return &pb.WResp{Wresp: 0}, nil
+	}
 
-	return &pb.WResp{Wresp: int32(3)}, nil
+	return &pb.WResp{Wresp: instance}, nil
 }
 
 // updating

@@ -20,6 +20,8 @@ drop:
 	@ go run cli/cmd/main.go drop
 update: 
 	@ go run cli/cmd/main.go update
+watch: 
+	@ go run cli/cmd/main.go watch
 build:
 	@sudo go build  -o bin/core miniCloudCore/cmd/main.go
 run: build
