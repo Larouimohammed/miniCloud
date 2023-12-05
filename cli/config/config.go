@@ -23,10 +23,9 @@ func (C *Config) Goyaml(pathfile string) *Config {
 	data, err := os.ReadFile(pathfile)
 	if err != nil {
 		if pathfile == "" {
-			data, err = os.ReadFile(DefaultPathFile)
-			log.Printf("invalid path  : %v", err)
+			return C.Goyaml(DefaultPathFile)
 		}
-		log.Printf(" marshal error : %v", err)
+		log.Printf(" marshal error maybe your path config is invalid  path : %v", err)
 	}
 	var config Config
 	databayte := []byte(data)
