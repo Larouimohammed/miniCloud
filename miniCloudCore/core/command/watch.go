@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"slices"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -26,10 +25,19 @@ func Watching(cli *client.Client, cn string) (int32, error) {
 
 	instance := 0
 	for i, l := range list {
-		contains := slices.Contains((l.Names), cn+fmt.Sprint(i))
-		if contains {
-			instance++
+		for _, n := range l.Names {
+			fmt.Println(n)
+			fmt.Println(cn + fmt.Sprint(i))
+			if cn+fmt.Sprint(i) == string(n) {
+				instance++
+
+			}
 		}
+
+		// contains := slices.Contains((l.Names), cn+fmt.Sprint(i))
+		// if contains {
+		// 	instance++
+		// }
 
 	}
 	return int32(instance), nil
