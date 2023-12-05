@@ -49,6 +49,10 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 func (S *Server) Drop(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	log.Printf("Droping CN: %v  Image:%v Subnet %v Numofinstance %d", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
 
+	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
+		log.Printf(" droping infra  error : %v", err)
+	}
+
 	return &pb.Resp{Resp: "your infra was droped"}, nil
 }
 

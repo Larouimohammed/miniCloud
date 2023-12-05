@@ -33,7 +33,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 		resp, err := cli.ContainerCreate(ctx, &container.Config{
 			Hostname: containername + fmt.Sprint(i),
 			Image:    image,
-			Cmd:      []string{"sleep", "10"},
+			Cmd:      []string{"sleep", "120"},
 			Tty:      false,
 		}, nil, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
