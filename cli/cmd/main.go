@@ -41,7 +41,7 @@ func main() {
 	}
 	if os.Args[1] == "drop" {
 
-		d, err := c.Drop(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas})
+		d, err := c.Drop(ctx, &pb.DReq{Containername: config.Containername,Nunofinstance: config.Replicas})
 		if err != nil {
 			log.Printf("Server can't Drop infra  : %v ", err)
 		}

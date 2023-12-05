@@ -9,6 +9,11 @@ message Req {
     int32  nunofinstance = 4;
 
 }
+message DReq {
+    string containername = 1;
+    int32  nunofinstance = 2;
+
+}
 
 message Resp {
  string resp = 1;
@@ -16,6 +21,6 @@ message Resp {
 
 service Prov {
    rpc apply (Req) returns  (Resp) {}
-   rpc drop (Req) returns  (Resp) {}
+   rpc drop (DReq) returns  (Resp) {}
 
 }

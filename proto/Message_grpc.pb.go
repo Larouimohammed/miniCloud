@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProvClient interface {
 	Apply(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
-	Drop(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
+	Drop(ctx context.Context, in *DReq, opts ...grpc.CallOption) (*Resp, error)
 }
 
 type provClient struct {
@@ -43,7 +43,7 @@ func (c *provClient) Apply(ctx context.Context, in *Req, opts ...grpc.CallOption
 	return out, nil
 }
 
-func (c *provClient) Drop(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error) {
+func (c *provClient) Drop(ctx context.Context, in *DReq, opts ...grpc.CallOption) (*Resp, error) {
 	out := new(Resp)
 	err := c.cc.Invoke(ctx, "/Prov/drop", in, out, opts...)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *provClient) Drop(ctx context.Context, in *Req, opts ...grpc.CallOption)
 // for forward compatibility
 type ProvServer interface {
 	Apply(context.Context, *Req) (*Resp, error)
-	Drop(context.Context, *Req) (*Resp, error)
+	Drop(context.Context, *DReq) (*Resp, error)
 	mustEmbedUnimplementedProvServer()
 }
 
@@ -68,7 +68,7 @@ type UnimplementedProvServer struct {
 func (UnimplementedProvServer) Apply(context.Context, *Req) (*Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Apply not implemented")
 }
-func (UnimplementedProvServer) Drop(context.Context, *Req) (*Resp, error) {
+func (UnimplementedProvServer) Drop(context.Context, *DReq) (*Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Drop not implemented")
 }
 func (UnimplementedProvServer) mustEmbedUnimplementedProvServer() {}
@@ -103,7 +103,7 @@ func _Prov_Apply_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 func _Prov_Drop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Req)
+	in := new(DReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func _Prov_Drop_Handler(srv interface{}, ctx context.Context, dec func(interface
 		FullMethod: "/Prov/drop",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvServer).Drop(ctx, req.(*Req))
+		return srv.(ProvServer).Drop(ctx, req.(*DReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

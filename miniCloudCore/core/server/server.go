@@ -37,6 +37,7 @@ func (S *Server) NewServer() (*Server, error) {
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
+	log.Printf("Provisionning Starting")
 	log.Printf("CN: %v  Image:%v Subnet %v Numofinstance %d", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
 		log.Printf(" provisionning error : %v", err)
@@ -46,8 +47,9 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 }
 
 // droping
-func (S *Server) Drop(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
-	log.Printf("Droping CN: %v  Image:%v Subnet %v Numofinstance %d", config.Containername, config.Image, config.Subnet, config.Nunofinstance)
+func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
+	log.Printf("Droping Starting")
+	log.Printf("Droping CN: %v Numofinstance %d", config.Containername, config.Nunofinstance)
 
 	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
 		log.Printf(" droping infra  error : %v", err)
