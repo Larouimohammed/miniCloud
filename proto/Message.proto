@@ -15,6 +15,7 @@ message Resp {
 }
 
 service Prov {
-  
    rpc apply (Req) returns  (Resp) {}
+   rpc drop (Req) returns  (Resp) {}
+
 }

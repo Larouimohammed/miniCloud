@@ -43,6 +43,11 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	}
 	return &pb.Resp{Resp: "your miniCloud is provisioned say :thank you khero"}, nil
 }
+func (S *Server) Drop(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
+
+	return &pb.Resp{Resp: "your infra was droped"}, nil
+}
+
 
 func (S *Server) Run() error {
 	flag.Parse()
