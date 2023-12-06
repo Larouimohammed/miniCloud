@@ -58,11 +58,14 @@ func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 	return &pb.Resp{Resp: "your infra was droped"}, nil
 }
 
-// watching
-
+// updating
 func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	log.Printf("Updating infra Starting")
-	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
+	instance, err := command.Watching(S.cli, config.Containername)
+	if err != nil {
+		log.Printf("number of instance is indectectible : %v", err)
+	}
+	if err := command.StopandDropContainer(S.cli, config.Containername, instance); err != nil {
 		log.Printf(" droping infra  error : %v", err)
 	}
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
@@ -73,18 +76,18 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	return &pb.Resp{Resp: "your infra was updated"}, nil
 
 }
+
+// watching
 func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) {
 	log.Printf("Watching %v infra Starting", config.Containername)
 	instance, err := command.Watching(S.cli, config.Containername)
 	if err != nil {
 		log.Printf("Watchinh error : %v", err)
-		return &pb.WResp{Wresp: 0}, nil
+		return &pb.WResp{Wresp: 01}, nil
 	}
 
 	return &pb.WResp{Wresp: instance}, nil
 }
-
-// updating
 
 func (S *Server) Run() error {
 	flag.Parse()
