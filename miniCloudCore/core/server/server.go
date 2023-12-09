@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	t "time"
 
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
@@ -43,7 +44,7 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 		log.Printf(" provisionning error : %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
-	return &pb.Resp{Resp: "your infra was provisioned"}, nil
+	return &pb.Resp{Resp: t.Now().String()}, nil
 }
 
 // droping
@@ -55,7 +56,7 @@ func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 		log.Printf(" droping infra  error : %v", err)
 	}
 
-	return &pb.Resp{Resp: "your infra was droped"}, nil
+	return &pb.Resp{Resp: t.Now().String()}, nil
 }
 
 // updating
@@ -71,9 +72,9 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
 		log.Printf(" provisionning error : %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
-	}
 
-	return &pb.Resp{Resp: "your infra was updated"}, nil
+	}
+	return &pb.Resp{Resp: t.Now().String()}, nil
 
 }
 

@@ -1,5 +1,5 @@
-#dont write container nimae with integer we must fix that
+ #dont write container nimae with integer we must fix that
 containername: mylocalhostfriendlysure
-image: ubuntu
+image: debian
 subnet: 172.17.0.1/16
-replicas: 2
+replicas: 5

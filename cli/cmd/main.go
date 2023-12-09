@@ -37,7 +37,7 @@ func main() {
 			log.Printf("Server can't provisionning infra: %v ", err)
 
 		}
-		log.Printf("Respending: %s", r.Resp)
+		log.Printf("Your infra %v provisioned at : %s", config.Containername, r.Resp)
 	}
 	if os.Args[1] == "drop" {
 
@@ -45,7 +45,7 @@ func main() {
 		if err != nil {
 			log.Printf("Server can't Drop infra  : %v ", err)
 		}
-		log.Printf("Respending: %s", d.Resp)
+		log.Printf("your infra %v was droped at : %s", config.Containername, d.Resp)
 	}
 	if os.Args[1] == "update" {
 
@@ -53,7 +53,7 @@ func main() {
 		if err != nil {
 			log.Printf("Server can't Update infra  : %v ", err)
 		}
-		log.Printf("Respending: %s", u.Resp)
+		log.Printf("Update state: infra for %v updated at %s", config.Containername, u.Resp)
 	}
 	if os.Args[1] == "watch" {
 
@@ -61,6 +61,6 @@ func main() {
 		if err != nil {
 			log.Printf("Server can't Update infra  : %v ", err)
 		}
-		log.Printf("Respending: %d", u.Wresp)
+		log.Printf("There is : %d instance of %v", u.Wresp, config.Containername)
 	}
 }
