@@ -7,10 +7,13 @@ import (
 	"log"
 	"os"
 
+	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
+
+var P *consul.ConsulProxy
 
 func ProvApply(cli *client.Client, containername string, image string, subnet string, numberofistance int32) error {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -45,6 +48,12 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 			log.Printf("start container failled: %v", err)
 			return err
+
+		}
+		p := P.NewProxy()
+		if err := p.Start(containername + fmt.Sprint(i)); err != nil {
+
+			log.Fatal(err)
 
 		}
 

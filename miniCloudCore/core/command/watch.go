@@ -11,7 +11,7 @@ import (
 )
 
 func Watching(cli *client.Client, cn string) (int32, error) {
-	//we should fic that
+	// we should fic that
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Printf(" initialisation docker client error : %v", err)
@@ -28,7 +28,7 @@ func Watching(cli *client.Client, cn string) (int32, error) {
 	for _, l := range list {
 		for _, n := range l.Names {
 			result := n
-			//we should fi that 
+			//we should fi that
 			var reNameBlacklist = regexp.MustCompile(`(&|>|/|0|1|2|3|4|5|6|7|9|<|\/|:|\n|\r)*`)
 			cnn := reNameBlacklist.ReplaceAllString(result, "")
 			fmt.Println(cnn)
@@ -39,7 +39,7 @@ func Watching(cli *client.Client, cn string) (int32, error) {
 			}
 		}
 
-		}
+	}
 	return int32(instance), nil
 
 }

@@ -24,14 +24,14 @@ type Server struct {
 }
 
 func (S *Server) NewServer() (*Server, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Printf(" initialisation docker client error : %v", err)
 		return nil, err
 	}
-	defer cli.Close()
+	defer client.Close()
 	return &Server{
-		cli: cli,
+		cli: client,
 	}, nil
 
 }

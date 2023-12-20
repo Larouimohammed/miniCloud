@@ -9,7 +9,6 @@ import (
 var Server *server.Server
 
 func main() {
-
 	server, err := Server.NewServer()
 	if err != nil {
 		log.Printf("Server initialisation : %v", err)
