@@ -55,7 +55,7 @@ func (P *ConsulProxy) registerService(containerName string) {
 		CheckID:                        containerName,
 	}
 	register := &capi.AgentServiceRegistration{
-		ID:      "login_service",
+		ID:      "ID"+containerName,
 		Name:    containerName,
 		Tags:    []string{"login"},
 		Address: "127.0.0.1",
