@@ -19,9 +19,12 @@ run: build
 	@sudo  ./bin/core
 consul:
     
-	@ sudo docker run -d -p 8500:8500 -p 8600:8600/udp --name=server consul:1.15.4 agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+	@ sudo docker run -d -p 8500:8500 -p 8600:8600/udp -p 8600:8600/tcp -p 8500:8500/udp -p 8500:8500/tcp --name=server consul:1.15.4 agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
 	
 	@ sudo docker run --name=client consul:1.15.4 agent -node=client-1 -retry-join=172.17.0.2
+	
+	@ go get github.com/hashicorp/consul/api
+
 
 dockersdk:
 

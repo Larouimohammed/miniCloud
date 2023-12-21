@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"log"
 
+	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
+var c *consul.ConsulProxy
+
 func StopandDropContainer(cli *client.Client, containername string, numberofistance int32) error {
+	// c := P.NewProxy()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Printf(" initialisation docker client error : %v", err)
@@ -32,6 +36,7 @@ func StopandDropContainer(cli *client.Client, containername string, numberofista
 			log.Printf("Unable to remove container: %s", err)
 			return err
 		}
+		// c.Deregisterservice(containername+fmt.Sprint(i))
 
 	}
 	return nil

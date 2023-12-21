@@ -29,7 +29,7 @@ func (S *Server) NewServer() (*Server, error) {
 		log.Printf(" initialisation docker client error : %v", err)
 		return nil, err
 	}
-	defer client.Close()
+	// defer client.Close()
 	return &Server{
 		cli: client,
 	}, nil
