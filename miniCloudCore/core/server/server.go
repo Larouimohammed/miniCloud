@@ -23,18 +23,19 @@ type Server struct {
 	pb.UnimplementedProvServer
 }
 
-func (S *Server) NewServer() (*Server, error) {
+func NewServer() *Server {
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Printf(" initialisation docker client error : %v", err)
-		return nil, err
+		return nil
 	}
 	// defer client.Close()
 	return &Server{
 		cli: client,
-	}, nil
+	}
 
 }
+var DefaultServer = NewServer()
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
@@ -98,7 +99,7 @@ func (S *Server) Run() error {
 		return err
 	}
 	s := grpc.NewServer()
-	pb.RegisterProvServer(s, &Server{})
+	pb.RegisterProvServer(s,S)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

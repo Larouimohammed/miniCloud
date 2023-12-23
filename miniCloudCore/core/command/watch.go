@@ -12,14 +12,7 @@ import (
 
 func Watching(cli *client.Client, cn string) (int32, error) {
 	// we should fic that
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		log.Printf(" initialisation docker client error : %v", err)
-		return 0, err
-	}
-	defer cli.Close()
-
-	list, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
+    list, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
 		log.Printf(" listing error : %v", err)
 		return 0, err
