@@ -17,7 +17,7 @@ build:
 	@sudo go build  -o bin/core miniCloudCore/cmd/main.go
 run: build
 	@sudo  ./bin/core
-consul:
+consulinstall:
     
 	@ sudo docker run -d -p 8500:8500 -p 8600:8600/udp -p 8600:8600/tcp -p 8500:8500/udp -p 8500:8500/tcp --name=server consul:1.15.4 agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
 	
