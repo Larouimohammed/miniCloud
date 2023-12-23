@@ -5,6 +5,7 @@ ADD . /build/
 WORKDIR /build
 RUN CGO_ENABLED=0 GOOS=linux go build -o bin/core  miniCloudCore/cmd/main.go
 
+# generate clean, final image for end users
 
 
 # executable
