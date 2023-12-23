@@ -22,11 +22,11 @@ func main() {
 	}
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	
+
 	select {
 	case <-sig:
 		logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
-		time.Sleep(10 *time.Second)
+		time.Sleep(10 * time.Second)
 
 	}
 	defer logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)

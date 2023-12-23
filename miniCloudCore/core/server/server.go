@@ -35,7 +35,7 @@ func NewServer() *Server {
 	}
 	// defer client.Close()
 	return &Server{
-		cli: client,
+		cli:    client,
 		logger: *logger,
 	}
 
@@ -43,10 +43,9 @@ func NewServer() *Server {
 
 var DefaultServer = NewServer()
 
-
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
-	S.logger.Logger.Sugar().Infow("Provisionning infra Starting","CN :",config.Containername,"Image :",config.Image,"Numofinstance :",config.Nunofinstance)
+	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN :", config.Containername, "Image :", config.Image, "Numofinstance :", config.Nunofinstance)
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning error : %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
@@ -56,7 +55,7 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 
 // droping
 func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
-	S.logger.Logger.Sugar().Infow("Droping infra Starting","CN :",config.Containername,"Numofinstance :",config.Nunofinstance)
+	S.logger.Logger.Sugar().Infow("Droping infra Starting", "CN :", config.Containername, "Numofinstance :", config.Nunofinstance)
 	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
 		S.logger.Logger.Sugar().Error(" droping infra  error : %v", err)
 	}
@@ -105,7 +104,7 @@ func (S *Server) Run() error {
 	}
 	s := grpc.NewServer()
 	pb.RegisterProvServer(s, S)
-	S.logger.Logger.Sugar().Infow("Server Starting",  "listing on", lis.Addr())
+	S.logger.Logger.Sugar().Infow("Server Starting", "listing on", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		S.logger.Logger.Sugar().Error("failed to serve: %v", err)
 		return err
