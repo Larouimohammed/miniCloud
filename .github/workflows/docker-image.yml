@@ -19,8 +19,6 @@ jobs:
   deploy:
       runs-on: ubuntu-latest
       steps:
-       - name: logini
-         run: docker login --username khero1234 --password loginmymind88
        - name: push image to docker hub
          run:  docker push docker.io/khero1234/minicloud_app:minicloud_app:latest
 
