@@ -5,10 +5,9 @@ ADD . /build/
 WORKDIR /build
 RUN CGO_ENABLED=0 GOOS=linux go build -o main  miniCloudCore/cmd/main.go
 
-
 # generate clean, final image for end users
 FROM alpine:3.16
-COPY --from=builder /build/laroui-agent .
+COPY --from=builder /build/main .
 
 # executable
 ENTRYPOINT [ "./main" ]
