@@ -1,0 +1,29 @@
+name: Docker Image push
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag miniCloud:$(date +%s)
+  deploy:
+      runs-on: ubuntu-latest
+      steps:
+       - name: push image to docker hub
+         run:  docker push khero1234/minicloud_app:miniCloud:$(date +%s)
+
+
+     
+     
+
+   
