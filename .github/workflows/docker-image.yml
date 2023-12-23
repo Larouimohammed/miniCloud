@@ -22,7 +22,7 @@ jobs:
        - name: logini
          run: docker login --username khero1234 --password loginmymind88
        - name: push image to docker hub
-         run:  docker push khero1234/minicloud_app:minicloud_app
+         run:  docker push khero1234/minicloud_app
 
 
      
