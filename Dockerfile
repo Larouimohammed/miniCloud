@@ -1,5 +1,5 @@
 # builder image
-FROM golang:1.21.4-alpine3.16 as builder
+FROM golang:latest
 RUN mkdir /build
 ADD . /build/
 WORKDIR /build
