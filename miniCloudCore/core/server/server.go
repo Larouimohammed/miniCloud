@@ -30,7 +30,7 @@ func NewServer() *Server {
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	logger := log.Newlogger()
 	if err != nil {
-		logger.Logger.Sugar().Error(" initialisation docker client error : %v", err)
+		logger.Logger.Sugar().Error("initialisation docker client error %v", err)
 		return nil
 	}
 	// defer client.Close()
@@ -45,9 +45,9 @@ var DefaultServer = NewServer()
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
-	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN :", config.Containername, "Image :", config.Image, "Numofinstance :", config.Nunofinstance)
+	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN", config.Containername, "Image", config.Image, "Numofinstance", config.Nunofinstance)
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
-		S.logger.Logger.Sugar().Error(" provisionning error : %v", err)
+		S.logger.Logger.Sugar().Error(" provisionning error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
 	return &pb.Resp{Resp: t.Now().String()}, nil
@@ -55,9 +55,9 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 
 // droping
 func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
-	S.logger.Logger.Sugar().Infow("Droping infra Starting", "CN :", config.Containername, "Numofinstance :", config.Nunofinstance)
+	S.logger.Logger.Sugar().Infow("Droping infra Starting", "CN", config.Containername, "Numofinstance", config.Nunofinstance)
 	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
-		S.logger.Logger.Sugar().Error(" droping infra  error : %v", err)
+		S.logger.Logger.Sugar().Error(" droping infra  error %v", err)
 	}
 
 	return &pb.Resp{Resp: t.Now().String()}, nil
@@ -68,13 +68,13 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Updating infra Starting")
 	instance, err := command.Watching(S.cli, config.Containername)
 	if err != nil {
-		S.logger.Logger.Sugar().Error("number of instance is indectectible : %v", err)
+		S.logger.Logger.Sugar().Error("number of instance is indectectible  %v", err)
 	}
 	if err := command.StopandDropContainer(S.cli, config.Containername, instance); err != nil {
-		S.logger.Logger.Sugar().Error(" droping infra  error : %v", err)
+		S.logger.Logger.Sugar().Error(" droping infra  error  %v", err)
 	}
 	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance); err != nil {
-		S.logger.Logger.Sugar().Error(" provisionning error : %v", err)
+		S.logger.Logger.Sugar().Error(" provisionning error  %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
 	}
@@ -99,7 +99,7 @@ func (S *Server) Run() error {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		S.logger.Logger.Sugar().Error("failed to listen: %v", err)
+		S.logger.Logger.Sugar().Error("failed to listen %v", err)
 		return err
 	}
 	s := grpc.NewServer()

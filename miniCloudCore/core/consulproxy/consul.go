@@ -28,7 +28,6 @@ func (P *ConsulProxy) NewProxy() *ConsulProxy {
 	}
 
 }
-
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
 	P.registerService(containerName, containerid, ip, port)
 	// ctx, cancel := context.WithCancel(context.Background())
@@ -54,7 +53,7 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 			}
 			// case <-ctx.Done():
 			// 	P.deregisterservice(containerName)
-
+            P.cli.Agent().AgentHealthServiceByNameOpts(containerName,&capi.QueryOptions{})
 		}
 
 	}
@@ -66,11 +65,12 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		TLSSkipVerify:                  true,
 		TTL:                            ttl.String(),
 		CheckID:                        containerName,
-		DockerContainerID: containerid,
-		// Interval:          "5s",
-		Timeout: "10s",
-		// HTTP:    fmt.Sprintf("http://%s:%v", ip, port),
+		DockerContainerID:              containerid,
+		// Interval:                       "5s",
+		Timeout:                        "10s",
+		// HTTP:                           fmt.Sprintf("http://%s:%v", ip, port),
 	}
+
 	register := &capi.AgentServiceRegistration{
 		ID:      "Id" + containerName,
 		Name:    containerName,
@@ -79,15 +79,26 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Port:    port,
 		Check:   check,
 	}
-	if err := P.cli.Agent().ServiceRegister(register); err != nil {
-		log.Fatal(err)
+	err := P.cli.Agent().ServiceRegister(register)
+	if err != nil {
+		log.Printf("Failed to register service: %s:%v with error : %v", ip, port, err)
+	} else {
+		log.Printf("successfully register service: %s:%v", ip, port)
 	}
 
-}
-func (P *ConsulProxy) Deregisterservice(containerName string) {
+	// info, infos, err := P.cli.Agent().AgentHealthServiceByName(containerName)
+	// if err != nil {
+	// 	log.Println(err)
 
-	if err := P.cli.Agent().ServiceDeregister(containerName); err != nil {
-		log.Println(err)
-	}
+	// }
+	// log.Printf("info %s infos %v", info, infos)
 
 }
+
+// func (P *ConsulProxy) Deregisterservice(containerName string) {
+
+// 	if err := P.cli.Agent().ServiceDeregister(containerName); err != nil {
+// 		log.Println(err)
+// 	}
+
+// }

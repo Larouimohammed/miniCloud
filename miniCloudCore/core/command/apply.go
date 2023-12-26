@@ -33,7 +33,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 			Cmd:             []string{"sleep", "1200"},
 			Tty:             false,
 			NetworkDisabled: false,
-		}, nil, nil, nil, containername+fmt.Sprint(i))
+		}, &container.HostConfig{NetworkMode:"bridge" }, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
 			log.Printf("create container failled : %v", err)
 			return err
@@ -47,7 +47,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 		}
 
 		go func(j int) {
-			if err := p.Start(containername+fmt.Sprint(j), resp.ID, "172.17.0.4", 80); err != nil {
+			if err := p.Start(containername+fmt.Sprint(j), resp.ID,"172.17.0.4",80); err != nil {
 
 				log.Fatal(err)
 
