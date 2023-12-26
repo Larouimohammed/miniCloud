@@ -13,7 +13,7 @@ const (
 )
 
 type ConsulProxy struct {
-	cli *capi.Client
+	Cli *capi.Client
 	// cancel context.CancelFunc
 }
 
@@ -24,11 +24,13 @@ func NewProxy() *ConsulProxy {
 		log.Println(err)
 	}
 	return &ConsulProxy{
-		cli: client,
+		Cli: client,
 	}
 
 }
-var DefaultConsulProxy=NewProxy()
+
+var DefaultConsulProxy = NewProxy()
+
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
 	P.registerService(containerName, containerid, ip, port)
 	// ctx, cancel := context.WithCancel(context.Background())
@@ -49,12 +51,12 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 		select {
 		case <-ticker.C:
 
-			if err := P.cli.Agent().UpdateTTL(containerName, "online", capi.HealthPassing); err != nil {
+			if err := P.Cli.Agent().UpdateTTL(containerName, "online", capi.HealthPassing); err != nil {
 				log.Fatal(err)
 			}
 			// case <-ctx.Done():
 			// 	P.deregisterservice(containerName)
-            P.cli.Agent().AgentHealthServiceByNameOpts(containerName,&capi.QueryOptions{})
+			P.Cli.Agent().AgentHealthServiceByNameOpts(containerName, &capi.QueryOptions{})
 		}
 
 	}
@@ -68,7 +70,7 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		CheckID:                        containerName,
 		DockerContainerID:              containerid,
 		// Interval:                       "5s",
-		Timeout:                        "10s",
+		// Timeout: "10s",
 		// HTTP:                           fmt.Sprintf("http://%s:%v", ip, port),
 	}
 
@@ -80,7 +82,7 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Port:    port,
 		Check:   check,
 	}
-	err := P.cli.Agent().ServiceRegister(register)
+	err := P.Cli.Agent().ServiceRegister(register)
 	if err != nil {
 		log.Printf("Failed to register service: %s:%v with error : %v", ip, port, err)
 	} else {

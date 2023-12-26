@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 
 	"net"
 	t "time"
@@ -94,28 +95,31 @@ func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) 
 	return &pb.WResp{Wresp: instance}, nil
 }
 
-func (S *Server) Run() error {
+func (S *Server) Run() *grpc.Server {
 
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		S.logger.Logger.Sugar().Error("failed to listen %v", err)
-		return err
+		return nil
 	}
 	s := grpc.NewServer()
 	pb.RegisterProvServer(s, S)
 	S.logger.Logger.Sugar().Infow("Server Starting", "listing on", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		S.logger.Logger.Sugar().Error("failed to serve: %v", err)
-		return err
+		return nil
 	}
 
-	return nil
+	return s
 }
-func (s *Server) close() error {
+func (s *Server) Close(grpcserver *grpc.Server, sig os.Signal) error {
+	defer s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
+	s.logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
 	if err := s.cli.Close(); err != nil {
 		s.logger.Logger.Sugar().Error(err)
 	}
-    
+	grpcserver.GracefulStop()
+
 	return nil
 }

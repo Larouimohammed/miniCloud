@@ -13,10 +13,11 @@ import (
 	"github.com/docker/docker/client"
 )
 
-var P *consul.ConsulProxy
+
 
 func ProvApply(cli *client.Client, containername string, image string, subnet string, numberofistance int32) error {
-	p := P.NewProxy()
+	p := consul.DefaultConsulProxy
+
 	ctx := context.Background()
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {

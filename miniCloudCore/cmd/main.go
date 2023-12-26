@@ -16,14 +16,18 @@ func main() {
 		logger.Logger.Error("Server initialisation failled")
 
 	}
-	if err := server.Run(); err != nil {
-		logger.Logger.Sugar().Error(err)
+	srv := server.Run()
+	if srv == nil {
+		logger.Logger.Sugar().Error("grpc server failled to start ")
 	}
 	
 	sig := make(chan os.Signal, 1)
+
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 	<-sig
-	logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
-	logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
+	server.Close(srv,<-sig)
+	
+	
+	
 
 }
