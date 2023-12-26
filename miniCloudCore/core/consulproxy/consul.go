@@ -78,8 +78,9 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		ID:      "Id" + containerName,
 		Name:    containerName,
 		Tags:    []string{containerid},
-		Address: ip,
-		Port:    port,
+		// failures_before_critical: "10s",
+		// Address: ip,
+		// Port:    port,
 		Check:   check,
 	}
 	err := P.Cli.Agent().ServiceRegister(register)
