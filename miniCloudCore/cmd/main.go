@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	logger "github.com/Larouimohammed/miniCloud.git/logger"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/server"
@@ -20,14 +19,11 @@ func main() {
 	if err := server.Run(); err != nil {
 		logger.Logger.Sugar().Error(err)
 	}
+	
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
+	logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 
-	select {
-	case <-sig:
-		logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
-		time.Sleep(10 * time.Second)
-
-	}
-	defer logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 }

@@ -112,3 +112,10 @@ func (S *Server) Run() error {
 
 	return nil
 }
+func (s *Server) close() error {
+	if err := s.cli.Close(); err != nil {
+		s.logger.Logger.Sugar().Error(err)
+	}
+    
+	return nil
+}

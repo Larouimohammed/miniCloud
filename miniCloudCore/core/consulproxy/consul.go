@@ -18,7 +18,7 @@ type ConsulProxy struct {
 }
 
 // Get a new client
-func (P *ConsulProxy) NewProxy() *ConsulProxy {
+func NewProxy() *ConsulProxy {
 	client, err := capi.NewClient(capi.DefaultNonPooledConfig())
 	if err != nil {
 		log.Println(err)
@@ -28,6 +28,7 @@ func (P *ConsulProxy) NewProxy() *ConsulProxy {
 	}
 
 }
+var DefaultConsulProxy=NewProxy()
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
 	P.registerService(containerName, containerid, ip, port)
 	// ctx, cancel := context.WithCancel(context.Background())
