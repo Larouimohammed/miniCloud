@@ -5,9 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 
 	"net"
 	t "time"
@@ -122,19 +120,19 @@ func (S *Server) Run() *grpc.Server {
 	// 	print("qfqsfdsgfds\n")
 
 	// }(wg)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		wg.Add(1)
-		sig := make(chan os.Signal, 1)
-		signal.Notify(sig, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-		<-sig
-		S.Close(s, <-sig)
+	// go func(wg *sync.WaitGroup) {
+	// 	defer wg.Done()
+	// 	wg.Add(1)
+	// 	sig := make(chan os.Signal, 1)
+	// 	signal.Notify(sig, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	// 	<-sig
+	// 	S.Close(s, <-sig)
 
-	}(wg)
-	wg.Wait()
+	// }(wg)
+	// wg.Wait()
 	return s
 }
-func (s *Server) Close(grpcserver *grpc.Server, sig os.Signal) error {
+func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) error {
 	defer s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 	s.logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
 	if err := s.cli.Close(); err != nil {

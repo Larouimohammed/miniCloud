@@ -69,19 +69,20 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		TTL:                            ttl.String(),
 		CheckID:                        containerName,
 		DockerContainerID:              containerid,
+		FailuresBeforeCritical:         1,
+		SuccessBeforePassing:           1,
+		Args:                           []string{"ls"},
 		// Interval:                       "5s",
-		// Timeout: "10s",
 		// HTTP:                           fmt.Sprintf("http://%s:%v", ip, port),
 	}
 
 	register := &capi.AgentServiceRegistration{
-		ID:      "Id" + containerName,
-		Name:    containerName,
-		Tags:    []string{containerid},
-		// failures_before_critical: "10s",
-		// Address: ip,
-		// Port:    port,
-		Check:   check,
+		ID:   containerName,
+		Name: containerName,
+		Tags: []string{containerid},
+		Address: ip,
+		Port:    port,
+		Check: check,
 	}
 	err := P.Cli.Agent().ServiceRegister(register)
 	if err != nil {
