@@ -5,7 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"net"
 	t "time"
@@ -96,49 +98,44 @@ func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) 
 	return &pb.WResp{Wresp: instance}, nil
 }
 
-func (S *Server) Run() *grpc.Server {
+func (S *Server) Run() {
 
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		S.logger.Logger.Sugar().Error("failed to listen %v", err)
-		return nil
+		S.logger.Logger.Sugar().Fatal("failed to listen %v", err)
+
 	}
 	s := grpc.NewServer()
 	pb.RegisterProvServer(s, S)
 	S.logger.Logger.Sugar().Infow("Server Starting", "listing on", lis.Addr())
+
+	sigCh := make(chan os.Signal, 1)
+	/*  when sigCh channel gets a signal notify me */
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		sig := <-sigCh
+		S.CloseServer(s, sig)
+		wg.Done()
+	}()
+
 	if err := s.Serve(lis); err != nil {
-		S.logger.Logger.Sugar().Error("failed to serve: %v", err)
-		return nil
+		S.logger.Logger.Sugar().Fatal("failed to serve: %v", err)
+
 	}
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-	// go func(wg *sync.WaitGroup) {
-	// 	defer wg.Done()
-	// 	wg.Add(1)
-
-	// 	print("qfqsfdsgfds\n")
-
-	// }(wg)
-	// go func(wg *sync.WaitGroup) {
-	// 	defer wg.Done()
-	// 	wg.Add(1)
-	// 	sig := make(chan os.Signal, 1)
-	// 	signal.Notify(sig, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	// 	<-sig
-	// 	S.Close(s, <-sig)
-
-	// }(wg)
-	// wg.Wait()
-	return s
+	wg.Wait()
 }
-func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) error {
+
+func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
 	defer s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 	s.logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
+
 	if err := s.cli.Close(); err != nil {
 		s.logger.Logger.Sugar().Error(err)
+
 	}
 	grpcserver.GracefulStop()
 
-	return nil
 }
