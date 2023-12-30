@@ -77,6 +77,7 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Port:    port,
 		Check:   check,
 	}
+	
 	err := P.Cli.Agent().ServiceRegister(register)
 	if err != nil {
 		log.Printf("Failed to register service: %s:%v with error : %v", ip, port, err)

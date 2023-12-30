@@ -144,5 +144,6 @@ func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
 
 	}
 	grpcserver.GracefulStop()
+	// s.consulClient.Cli.Agent().ServiceDeregister("service_Id :" + containerName,)
 
 }
