@@ -5,7 +5,6 @@
     "ui": true,
     "bootstrap_expect": 1,
     "enable_script_checks": true ,
-    "enable_debug":true
-   
+    "enable_debug":true   
     }
   

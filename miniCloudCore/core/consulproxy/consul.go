@@ -33,6 +33,7 @@ var DefaultConsulProxy = NewProxy()
 
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
 	P.registerService(containerName, containerid, ip, port)
+
 	go P.updatehealthcheck(containerName)
 	return nil
 }
@@ -44,7 +45,7 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 		select {
 		case <-ticker.C:
 
-			if err := P.Cli.Agent().UpdateTTL(containerName, "passing", capi.HealthPassing); err != nil {
+			if err := P.Cli.Agent().UpdateTTL(containerName, "pass", capi.HealthPassing); err != nil {
 				log.Println(err)
 			}
 
@@ -54,19 +55,21 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 
 }
 func (P *ConsulProxy) registerService(containerName, containerid, ip string, port int) {
+
 	check := &capi.AgentServiceCheck{
-		Name: "consul_check",
+		Name:                           "consul_check",
 		DeregisterCriticalServiceAfter: ttl.String(),
 		Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
-		// TTL:                            ttl.String(),
-		CheckID:           containerName,
-		DockerContainerID: containerid,
-		FailuresBeforeCritical:         1,
-		SuccessBeforePassing:           1,
-		Interval: "2s",
-		Args:     []string{"sh", "-c"},
-		Timeout:  "5s",
+
+		TTL:                    ttl.String(),
+		CheckID:                containerName,
+		DockerContainerID:      containerid,
+		FailuresBeforeCritical: 1,
+		SuccessBeforePassing:   1,
+		Interval:               "2s",
+		Args:                   []string{"sh", "-c"},
+		// Timeout:                "5s",
 	}
 
 	register := &capi.AgentServiceRegistration{
@@ -77,8 +80,9 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Port:    port,
 		Check:   check,
 	}
-	
-	err := P.Cli.Agent().ServiceRegister(register)
+
+	err := P.Cli.Agent().ServiceRegisterOpts(register, capi.ServiceRegisterOpts{ReplaceExistingChecks: true})
+
 	if err != nil {
 		log.Printf("Failed to register service: %s:%v with error : %v", ip, port, err)
 	} else {

@@ -18,7 +18,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 	ctx := context.Background()
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
-		
+
 		return err
 	}
 
@@ -33,7 +33,7 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 			NetworkDisabled: false,
 		}, &container.HostConfig{PublishAllPorts: true, Privileged: false}, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
-	
+
 			return err
 
 		}
@@ -50,8 +50,14 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 				log.Logger.Sugar().Error(err)
 
 			}
-
 		}(i)
+
+		// kv := consulproxy.Cli.KV()
+		// p := &capi.KVPair{Key: "TTL", Value: []byte("10")}
+		// _, err = kv.Put(p, nil)
+		// if err != nil {
+		// 	panic(err)
+		// }
 	}
 	return nil
 }
