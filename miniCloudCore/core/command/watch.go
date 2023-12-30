@@ -3,7 +3,7 @@ package command
 import (
 	"context"
 	"io"
-	"log"
+	log "github.com/Larouimohammed/miniCloud.git/logger"
 	"os"
 	"regexp"
 
@@ -11,11 +11,11 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func Watching(cli *client.Client, cn string) (int32, error) {
+func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
 	// we should fic that
 	list, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
-		log.Printf(" listing error : %v", err)
+		log.Logger.Sugar().Error(" listing error : %v", err)
 		return 0, err
 	}
 	instance := 0
@@ -33,7 +33,7 @@ func Watching(cli *client.Client, cn string) (int32, error) {
 				_, err = io.Copy(os.Stdout, out)
 
 				if err != nil {
-					log.Printf(err.Error())
+					log.Logger.Sugar().Error(err.Error())
 
 				}
 

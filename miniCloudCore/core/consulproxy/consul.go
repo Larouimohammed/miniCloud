@@ -33,16 +33,9 @@ var DefaultConsulProxy = NewProxy()
 
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
 	P.registerService(containerName, containerid, ip, port)
-	// ctx, cancel := context.WithCancel(context.Background())
-	// P.cancel = cancel
 	go P.updatehealthcheck(containerName)
 	return nil
 }
-
-// func (P *ConsulProxy) Close() {
-// 	P.cancel()
-
-// }
 
 func (P *ConsulProxy) updatehealthcheck(containerName string) {
 
@@ -51,12 +44,10 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 		select {
 		case <-ticker.C:
 
-			if err := P.Cli.Agent().UpdateTTL(containerName, "online", capi.HealthPassing); err != nil {
-				log.Fatal(err)
+			if err := P.Cli.Agent().UpdateTTL(containerName, "passing", capi.HealthPassing); err != nil {
+				log.Println(err)
 			}
-			// case <-ctx.Done():
-			// 	P.deregisterservice(containerName)
-			P.Cli.Agent().AgentHealthServiceByNameOpts(containerName, &capi.QueryOptions{})
+
 		}
 
 	}
@@ -64,25 +55,27 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 }
 func (P *ConsulProxy) registerService(containerName, containerid, ip string, port int) {
 	check := &capi.AgentServiceCheck{
+		Name: "consul_check",
 		DeregisterCriticalServiceAfter: ttl.String(),
+		Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
-		TTL:                            ttl.String(),
-		CheckID:                        containerName,
-		DockerContainerID:              containerid,
+		// TTL:                            ttl.String(),
+		CheckID:           containerName,
+		DockerContainerID: containerid,
 		FailuresBeforeCritical:         1,
 		SuccessBeforePassing:           1,
-		Args:                           []string{"ls"},
-		// Interval:                       "5s",
-		// HTTP:                           fmt.Sprintf("http://%s:%v", ip, port),
+		Interval: "2s",
+		Args:     []string{"sh", "-c"},
+		Timeout:  "5s",
 	}
 
 	register := &capi.AgentServiceRegistration{
-		ID:   containerName,
-		Name: containerName,
-		Tags: []string{containerid},
+		ID:      "service_Id :" + containerName,
+		Name:    containerName + " consul-proxy",
+		Tags:    []string{containerid},
 		Address: ip,
 		Port:    port,
-		Check: check,
+		Check:   check,
 	}
 	err := P.Cli.Agent().ServiceRegister(register)
 	if err != nil {
@@ -91,19 +84,4 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		log.Printf("successfully register service: %s:%v", ip, port)
 	}
 
-	// info, infos, err := P.cli.Agent().AgentHealthServiceByName(containerName)
-	// if err != nil {
-	// 	log.Println(err)
-
-	// }
-	// log.Printf("info %s infos %v", info, infos)
-
 }
-
-// func (P *ConsulProxy) Deregisterservice(containerName string) {
-
-// 	if err := P.cli.Agent().ServiceDeregister(containerName); err != nil {
-// 		log.Println(err)
-// 	}
-
-// }
