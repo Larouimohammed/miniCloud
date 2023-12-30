@@ -5,6 +5,9 @@ github.com/Microsoft/go-winio/internal/fs
 github.com/Microsoft/go-winio/internal/socket
 github.com/Microsoft/go-winio/internal/stringbuffer
 github.com/Microsoft/go-winio/pkg/guid
+# github.com/apenella/go-common-utils v0.1.1
+## explicit
+github.com/apenella/go-common-utils/data
 # github.com/armon/go-metrics v0.4.1
 ## explicit; go 1.12
 github.com/armon/go-metrics
@@ -45,6 +48,9 @@ github.com/docker/go-units
 # github.com/fatih/color v1.14.1
 ## explicit; go 1.17
 github.com/fatih/color
+# github.com/febrianrendak/go-ansible v0.4.1
+## explicit; go 1.14
+github.com/febrianrendak/go-ansible
 # github.com/gogo/protobuf v1.3.2
 ## explicit; go 1.15
 github.com/gogo/protobuf/proto

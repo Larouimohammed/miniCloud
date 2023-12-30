@@ -52,12 +52,6 @@ func ProvApply(cli *client.Client, containername string, image string, subnet st
 			}
 		}(i)
 
-		// kv := consulproxy.Cli.KV()
-		// p := &capi.KVPair{Key: "TTL", Value: []byte("10")}
-		// _, err = kv.Put(p, nil)
-		// if err != nil {
-		// 	panic(err)
-		// }
 	}
 	return nil
 }

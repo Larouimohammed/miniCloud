@@ -32,10 +32,10 @@ func NewProxy() *ConsulProxy {
 var DefaultConsulProxy = NewProxy()
 
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
-	P.registerService(containerName, containerid, ip, port)
+	return P.registerService(containerName, containerid, ip, port)
 
-	go P.updatehealthcheck(containerName)
-	return nil
+	// go P.updatehealthcheck(containerName)
+	
 }
 
 func (P *ConsulProxy) updatehealthcheck(containerName string) {
@@ -54,7 +54,7 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 	}
 
 }
-func (P *ConsulProxy) registerService(containerName, containerid, ip string, port int) {
+func (P *ConsulProxy) registerService(containerName, containerid, ip string, port int) error {
 
 	check := &capi.AgentServiceCheck{
 		Name:                           "consul_check",
@@ -62,14 +62,14 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
 
-		TTL:                    ttl.String(),
+		// TTL:                    ttl.String(),
 		CheckID:                containerName,
 		DockerContainerID:      containerid,
 		FailuresBeforeCritical: 1,
 		SuccessBeforePassing:   1,
 		Interval:               "2s",
 		Args:                   []string{"sh", "-c"},
-		// Timeout:                "5s",
+		Timeout:                "5s",
 	}
 
 	register := &capi.AgentServiceRegistration{
@@ -85,8 +85,10 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 
 	if err != nil {
 		log.Printf("Failed to register service: %s:%v with error : %v", ip, port, err)
+		return err
 	} else {
 		log.Printf("successfully register service: %s:%v", ip, port)
+		return nil
 	}
 
 }

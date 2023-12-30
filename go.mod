@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	github.com/docker/docker v24.0.7+incompatible
+	github.com/febrianrendak/go-ansible v0.4.1
 	github.com/hashicorp/consul/api v1.26.1
 	go.uber.org/zap v1.26.0
 	google.golang.org/grpc v1.59.0
@@ -13,6 +14,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/apenella/go-common-utils v0.1.1 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect

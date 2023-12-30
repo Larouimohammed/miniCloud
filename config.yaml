@@ -2,4 +2,4 @@
 containername: laroui
 image: nginx
 subnet: 172.17.0.1/16
-replicas: 2
+replicas: 3
