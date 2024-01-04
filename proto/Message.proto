@@ -1,13 +1,19 @@
 // file: invoicer.proto
 syntax = "proto3";
 option go_package = "./proto/Message";
-
 message Req {
     string containername = 1;
     string image = 2;
     string subnet = 3;
     int32  nunofinstance = 4;
+    repeated string command = 5;
+    repeated string installWithAnsible = 6;
 
+
+}
+
+message Resp {
+ string resp = 1;
 }
 message DReq {
     string containername = 1;
@@ -18,18 +24,16 @@ message WReq {
     string containername = 1;
 
 }
-message Resp {
- string resp = 1;
-}
 message WResp {
-    int32 wresp = 1;
-   }
+    string wresp = 1;
+    string  werr =2;  
+}
 
 service Prov {
    rpc apply (Req) returns  (Resp) {}
    rpc drop (DReq) returns  (Resp) {}
    rpc update (Req) returns  (Resp) {}
-   rpc watch (WReq) returns  (WResp) {}
+   rpc watch (WReq) returns  (stream WResp) {}
 
 
 }

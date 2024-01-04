@@ -3,15 +3,20 @@ package command
 import (
 	"context"
 	"io"
-	log "github.com/Larouimohammed/miniCloud.git/logger"
 	"os"
 	"regexp"
+
+	log "github.com/Larouimohammed/miniCloud.git/logger"
+	event "github.com/docker/docker/api/types/events"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )
 
-func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
+var Msg = make(chan event.Message, 1024)
+var Err = make(chan error, 1024)
+
+func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log) (int32, error) {
 	// we should fic that
 	list, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
@@ -20,7 +25,7 @@ func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
 	}
 	instance := 0
 	for _, l := range list {
-	  
+
 		for _, n := range l.Names {
 			result := n
 			//we should fi that
@@ -28,7 +33,7 @@ func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
 			cnn := reNameBlacklist.ReplaceAllString(result, "")
 			if cn == cnn {
 				instance++
-				out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true,Details: true})
+				out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true, Details: true})
 
 				_, err = io.Copy(os.Stdout, out)
 
@@ -40,12 +45,11 @@ func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
 			}
 
 		}
-
-		// statusCh, errCh := cli.ContainerWait(context.Background(), l.ID,container.WaitConditionNotRunning)
+		// statusCh, errCh := cli.ContainerWait(context.Background(), l.ID, container.WaitConditionNotRunning)
 		// select {
 		// case err := <-errCh:
 		// 	if err != nil {
-		// 		log.Printf(err.Error())
+		// 		log.Logger.Sugar().Error(err.Error())
 		// 	}
 		// case <-statusCh:
 		// }
@@ -54,10 +58,39 @@ func Watching(cli *client.Client, cn string ,log log.Log) (int32, error) {
 
 		// _, err = stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 		// if err != nil {
-		// 	log.Printf(err.Error())
+		// 	log.Logger.Sugar().Error(err.Error())
 		// }
 
 	}
 
 	return int32(instance), nil
+}
+
+// msg:=make(chan )
+func Watching(cli *client.Client, containername string, log log.Log) {
+	// wg := sync.WaitGroup{}
+	// wg.Add(1)
+	go func() {
+		// defer wg.Done()
+		for {
+			msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
+
+			select {
+			case err := <-errs:
+				Err <- err
+
+				// Err <- <-errs
+
+				log.Logger.Sugar().Error(err)
+			case msg := <-msgs:
+				Msg <- msg
+				// Msg <- <-msgs
+
+				log.Logger.Sugar().Info(msg)
+
+			}
+
+		}
+	}()
+	// wg.Wait()
 }

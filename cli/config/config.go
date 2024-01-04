@@ -7,15 +7,17 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
+const (
 	DefaultPathFile = "./config.yaml"
 )
 
 type Config struct {
-	Containername string `yaml:"containername"`
-	Image         string `yaml:"image"`
-	Subnet        string `yaml:"subnet"`
-	Replicas      int32  `yaml:"replicas"`
+	Containername      string   `yaml:"containername"`
+	Image              string   `yaml:"image"`
+	Subnet             string   `yaml:"subnet"`
+	Replicas           int32    `yaml:"replicas"`
+	Command            []string `yaml:"command"`
+	InstallWithAnsible []string `yaml:"Installwithansible"`
 }
 
 func (C *Config) Goyaml(pathfile string) *Config {

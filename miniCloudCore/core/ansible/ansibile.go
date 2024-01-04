@@ -1,5 +1,4 @@
 package main
-
 import (
 	"fmt"
 
@@ -7,7 +6,7 @@ import (
 
 	ansible "github.com/febrianrendak/go-ansible"
 )
-
+const DefauttPathInventory ="./inventory"
 type Executor interface {
 	Execute(command string, args []string, prefix string) error
 }
@@ -18,29 +17,29 @@ func (e *MyExecutor) Execute(command string, args []string, prefix string) error
 
 	return nil
 }
-
-func main() {
-	RunAnsible("dqd", "qdq")
-}
-func RunAnsible(playbookName, Inventory string) error {
+func RunAnsible(playbookName, inventory string) error {
 
 	ansiblePlaybookConnectionOptions := &ansible.AnsiblePlaybookConnectionOptions{
+		AskPass:    false,
 		Connection: "local",
 	}
 	ansiblePlaybookOptions := &ansible.AnsiblePlaybookOptions{
-		Inventory: "172.17.0.4,172.17.0.5,172.17.0.6",
+		Inventory: DefauttPathInventory,
 	}
 	playbook := &ansible.AnsiblePlaybookCmd{
-		Playbook:          playbookName,
+		Playbook:          inventory,
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		Exec:              &MyExecutor{},
 	}
-    playbook.Command()
+	playbook.Command()
 	err := playbook.Run()
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	return nil
+}
+func main() {
+	RunAnsible("my play", "172.17.04")
 }

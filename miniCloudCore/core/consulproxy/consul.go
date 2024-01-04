@@ -32,13 +32,16 @@ func NewProxy() *ConsulProxy {
 var DefaultConsulProxy = NewProxy()
 
 func (P *ConsulProxy) Start(containerName, containerid, ip string, port int) error {
-	return P.registerService(containerName, containerid, ip, port)
+	err := P.registerService(containerName, containerid, ip, port)
+	if err != nil {
+		return err
+	}
+	go P.updatehealthcheck(containerName)
+	return nil
 
-	// go P.updatehealthcheck(containerName)
-	
 }
 
-func (P *ConsulProxy) updatehealthcheck(containerName string) {
+func (P *ConsulProxy) updatehealthcheck(containerName string) error {
 
 	ticker := time.NewTicker(time.Second * 5)
 	for {
@@ -46,7 +49,7 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) {
 		case <-ticker.C:
 
 			if err := P.Cli.Agent().UpdateTTL(containerName, "pass", capi.HealthPassing); err != nil {
-				log.Println(err)
+				return err
 			}
 
 		}
@@ -63,17 +66,17 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		TLSSkipVerify:                  true,
 
 		// TTL:                    ttl.String(),
-		CheckID:                containerName,
-		DockerContainerID:      containerid,
-		FailuresBeforeCritical: 1,
-		SuccessBeforePassing:   1,
-		Interval:               "2s",
-		Args:                   []string{"sh", "-c"},
-		Timeout:                "5s",
+		CheckID:           containerName,
+		DockerContainerID: containerid,
+		// FailuresBeforeCritical: 1,
+		// SuccessBeforePassing:   1,
+		Interval: "10s",
+		Args:     []string{"sh", "-c"},
+		Timeout:  "15s",
 	}
 
 	register := &capi.AgentServiceRegistration{
-		ID:      "service_Id :" + containerName,
+		ID:      containerName,
 		Name:    containerName + " consul-proxy",
 		Tags:    []string{containerid},
 		Address: ip,

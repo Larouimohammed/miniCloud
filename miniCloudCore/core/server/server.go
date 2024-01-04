@@ -26,6 +26,7 @@ var (
 )
 
 type Server struct {
+	ctx context.Context
 	cli *client.Client
 	pb.UnimplementedProvServer
 	logger       log.Log
@@ -33,6 +34,7 @@ type Server struct {
 }
 
 func NewServer() *Server {
+	ctx := context.Background()
 	consulClient := consul.DefaultConsulProxy
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	logger := log.Newlogger()
@@ -45,6 +47,7 @@ func NewServer() *Server {
 		cli:          client,
 		logger:       *logger,
 		consulClient: consulClient,
+		ctx:          ctx,
 	}
 
 }
@@ -53,9 +56,10 @@ var DefaultServer = NewServer()
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
+	// S.ctx = context.WithValue(ctx, "containerName", config.Containername)
 	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN", config.Containername, "Image", config.Image, "Numofinstance", config.Nunofinstance)
 	defer S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, S.logger, S.consulClient); err != nil {
+	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, config.Command, config.InstallWithAnsible, S.logger, S.consulClient); err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
@@ -77,14 +81,14 @@ func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Updating infra Starting")
 	defer S.logger.Logger.Sugar().Infow("Updating infra complete successfully")
-	instance, err := command.Watching(S.cli, config.Containername, S.logger)
+	instance, err := command.GetInstance(ctx, S.cli, config.Containername, S.logger)
 	if err != nil {
 		S.logger.Logger.Sugar().Error("number of instance is indectectible  %v", err)
 	}
 	if err := command.StopandDropContainer(S.cli, config.Containername, instance); err != nil {
 		S.logger.Logger.Sugar().Error(" droping infra  error  %v", err)
 	}
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, S.logger, S.consulClient); err != nil {
+	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, config.Command, config.InstallWithAnsible, S.logger, S.consulClient); err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning error  %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
@@ -94,19 +98,28 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 }
 
 // watching
-func (S *Server) Watch(ctx context.Context, config *pb.WReq) (*pb.WResp, error) {
+func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 	S.logger.Logger.Sugar().Infow("Watching of infra Starting", config.Containername)
-	instance, err := command.Watching(S.cli, config.Containername, S.logger)
-	if err != nil {
-		S.logger.Logger.Sugar().Error("Watchinh error : %v", err)
-		return &pb.WResp{Wresp: 01}, nil
+	defer S.logger.Logger.Sugar().Infow("Watching of infra shuting", config.Containername)
+
+	command.Watching(S.cli, config.Containername, S.logger)
+
+	for {
+		msg := <-command.Msg
+		errs := <-command.Err
+		err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: errs.Error()})
+		if err != nil {
+			log.Newlogger().Logger.Sugar().Error(err)
+			return err
+		}
 	}
 
-	return &pb.WResp{Wresp: instance}, nil
 }
 
 func (S *Server) Run() {
-
+	// /ctx := context.Background()
+	// containerName, _ := S.ctx.Value("containerName").(string)
+	// ctx := context.WithValue(S.ctx, "containerName", containerName)
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
@@ -144,6 +157,10 @@ func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
 
 	}
 	grpcserver.GracefulStop()
-	// s.consulClient.Cli.Agent().ServiceDeregister("service_Id :" + containerName,)
+	// containerName:=ctx.Value()
+	// contanerName, _ := ctx.Value("containerName").(string)
+	// if err := s.consulClient.Cli.Agent().ServiceDeregister(contanerName); err != nil {
+	// 	s.logger.Logger.Sugar().Error("Deregister error", "err", err)
+	// }
 
 }

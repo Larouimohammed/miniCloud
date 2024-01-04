@@ -25,7 +25,7 @@ type ProvClient interface {
 	Apply(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
 	Drop(ctx context.Context, in *DReq, opts ...grpc.CallOption) (*Resp, error)
 	Update(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Resp, error)
-	Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (*WResp, error)
+	Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (Prov_WatchClient, error)
 }
 
 type provClient struct {
@@ -63,13 +63,36 @@ func (c *provClient) Update(ctx context.Context, in *Req, opts ...grpc.CallOptio
 	return out, nil
 }
 
-func (c *provClient) Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (*WResp, error) {
-	out := new(WResp)
-	err := c.cc.Invoke(ctx, "/Prov/watch", in, out, opts...)
+func (c *provClient) Watch(ctx context.Context, in *WReq, opts ...grpc.CallOption) (Prov_WatchClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Prov_ServiceDesc.Streams[0], "/Prov/watch", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &provWatchClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Prov_WatchClient interface {
+	Recv() (*WResp, error)
+	grpc.ClientStream
+}
+
+type provWatchClient struct {
+	grpc.ClientStream
+}
+
+func (x *provWatchClient) Recv() (*WResp, error) {
+	m := new(WResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // ProvServer is the server API for Prov service.
@@ -79,7 +102,7 @@ type ProvServer interface {
 	Apply(context.Context, *Req) (*Resp, error)
 	Drop(context.Context, *DReq) (*Resp, error)
 	Update(context.Context, *Req) (*Resp, error)
-	Watch(context.Context, *WReq) (*WResp, error)
+	Watch(*WReq, Prov_WatchServer) error
 	mustEmbedUnimplementedProvServer()
 }
 
@@ -96,8 +119,8 @@ func (UnimplementedProvServer) Drop(context.Context, *DReq) (*Resp, error) {
 func (UnimplementedProvServer) Update(context.Context, *Req) (*Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedProvServer) Watch(context.Context, *WReq) (*WResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Watch not implemented")
+func (UnimplementedProvServer) Watch(*WReq, Prov_WatchServer) error {
+	return status.Errorf(codes.Unimplemented, "method Watch not implemented")
 }
 func (UnimplementedProvServer) mustEmbedUnimplementedProvServer() {}
 
@@ -166,22 +189,25 @@ func _Prov_Update_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Prov_Watch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WReq)
-	if err := dec(in); err != nil {
-		return nil, err
+func _Prov_Watch_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(WReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(ProvServer).Watch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Prov/watch",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvServer).Watch(ctx, req.(*WReq))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(ProvServer).Watch(m, &provWatchServer{stream})
+}
+
+type Prov_WatchServer interface {
+	Send(*WResp) error
+	grpc.ServerStream
+}
+
+type provWatchServer struct {
+	grpc.ServerStream
+}
+
+func (x *provWatchServer) Send(m *WResp) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // Prov_ServiceDesc is the grpc.ServiceDesc for Prov service.
@@ -203,11 +229,13 @@ var Prov_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "update",
 			Handler:    _Prov_Update_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "watch",
-			Handler:    _Prov_Watch_Handler,
+			StreamName:    "watch",
+			Handler:       _Prov_Watch_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/Message.proto",
 }
