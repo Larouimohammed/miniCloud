@@ -84,6 +84,8 @@ func main() {
 			if msg.Werr != "" && msg.Wresp == "" {
 				log.Printf("Server Start Watch Streaming with Error : %v ", msg.Werr)
 
+			} else {
+				log.Printf("Server Start Watch Streaming with Error :%v \n and Message : %v ", msg.Werr, msg.Wresp)
 			}
 
 		}
