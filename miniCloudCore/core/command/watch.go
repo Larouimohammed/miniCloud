@@ -7,14 +7,10 @@ import (
 	"regexp"
 
 	log "github.com/Larouimohammed/miniCloud.git/logger"
-	event "github.com/docker/docker/api/types/events"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )
-
-var Msg = make(chan event.Message, 1024)
-var Err = make(chan error, 1024)
 
 func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log) (int32, error) {
 	// we should fic that
@@ -45,52 +41,57 @@ func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log
 			}
 
 		}
-		// statusCh, errCh := cli.ContainerWait(context.Background(), l.ID, container.WaitConditionNotRunning)
-		// select {
-		// case err := <-errCh:
+		// 	statusCh, errCh := cli.ContainerWait(context.Background(), l.ID, container.WaitConditionNotRunning)
+		// 	select {
+		// 	case err := <-errCh:
+		// 		if err != nil {
+		// 			log.Logger.Sugar().Error(err.Error())
+		// 		}
+		// 	case <-statusCh:
+		// 	}
+
+		// 	out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true})
+
+		// 	_, err = stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 		// 	if err != nil {
 		// 		log.Logger.Sugar().Error(err.Error())
 		// 	}
-		// case <-statusCh:
-		// }
 
-		// out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true})
-
-		// _, err = stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-		// if err != nil {
-		// 	log.Logger.Sugar().Error(err.Error())
 		// }
 
 	}
-
 	return int32(instance), nil
+
 }
 
-// msg:=make(chan )
-func Watching(cli *client.Client, containername string, log log.Log) {
-	// wg := sync.WaitGroup{}
-	// wg.Add(1)
-	go func() {
-		// defer wg.Done()
-		for {
-			msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
+// func Watching(cli *client.Client, containername string, log log.Log) {
+// wg := sync.WaitGroup{}
+// wg.Add(1)
+// go func() {
+// 	for {
+// 		msgs, serrs := cli.Events(, types.EventsOptions{})
 
-			select {
-			case err := <-errs:
-				Err <- err
+// 		select {
+// 		case msg := <-msgs:
+// 			log.Logger.Sugar().Info(msg)
 
-				// Err <- <-errs
+// 			err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: ""})
+// 			if err != nil {
+// 				S.logger.Logger.Sugar().Error(err)
+// 				return err
+// 			}
+// 		case errs := <-serrs:
+// 			S.logger.Logger.Sugar().Error(errs)
 
-				log.Logger.Sugar().Error(err)
-			case msg := <-msgs:
-				Msg <- msg
-				// Msg <- <-msgs
+// 			err := stream.Send(&pb.WResp{Wresp: "", Werr: errs.Error()})
+// 			if err != nil {
+// 				S.logger.Logger.Sugar().Error(err)
+// 				return err
+// 			}
 
-				log.Logger.Sugar().Info(msg)
+// 		}
 
-			}
-
-		}
-	}()
-	// wg.Wait()
-}
+// 	}
+// }()
+// wg.Wait()
+// }

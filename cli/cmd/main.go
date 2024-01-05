@@ -73,14 +73,16 @@ func main() {
 		for {
 			msg, err := stream.Recv()
 			if err == io.EOF {
-				log.Fatalf("End of file error %v", err)
+				log.Printf("End of file error %v", err)
 			}
 			if err != nil {
-				log.Fatalf("%v.ListFeatures(_) = _, %v", c, err)
+				log.Printf("%v.ListFeatures(_) = _, %v", c, err)
 			}
-			log.Printf("Server stremaing with message : %v ", msg.Wresp)
-			if msg.Wresp != "" {
-				log.Printf("Server stremaing with error : %v ", msg.Werr)
+			if msg.Werr == "" && msg.Wresp != "" {
+				log.Printf("Server Start Watch Streaming With Message : %v ", msg.Wresp)
+			}
+			if msg.Werr != "" && msg.Wresp == "" {
+				log.Printf("Server Start Watch Streaming with Error : %v ", msg.Werr)
 
 			}
 

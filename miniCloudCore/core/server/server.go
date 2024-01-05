@@ -14,6 +14,7 @@ import (
 
 	log "github.com/Larouimohammed/miniCloud.git/logger"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
+	"github.com/docker/docker/api/types"
 
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
@@ -101,19 +102,34 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 	S.logger.Logger.Sugar().Infow("Watching of infra Starting", config.Containername)
 	defer S.logger.Logger.Sugar().Infow("Watching of infra shuting", config.Containername)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 
-	command.Watching(S.cli, config.Containername, S.logger)
+	go func(wg *sync.WaitGroup) {
 
-	for {
-		msg := <-command.Msg
-		errs := <-command.Err
-		err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: errs.Error()})
-		if err != nil {
-			log.Newlogger().Logger.Sugar().Error(err)
-			return err
+		defer wg.Done()
+
+		for {
+			msgs, serrs := S.cli.Events(S.ctx, types.EventsOptions{})
+            select {
+			case msg := <-msgs:
+				err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: ""})
+				if err != nil {
+					S.logger.Logger.Sugar().Error(err)
+
+				}
+			case errs := <-serrs:
+				err := stream.Send(&pb.WResp{Wresp: "", Werr: errs.Error()})
+				if err != nil {
+					S.logger.Logger.Sugar().Error(err)
+				}
+
+			}
+
 		}
-	}
-
+	}(&wg)
+	wg.Wait()
+	return nil
 }
 
 func (S *Server) Run() {
@@ -134,12 +150,13 @@ func (S *Server) Run() {
 	/*  when sigCh channel gets a signal notify me */
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
+	go func(wg *sync.WaitGroup) {
+		wg.Add(1)
+		defer wg.Done()
 		sig := <-sigCh
 		S.CloseServer(s, sig)
-		wg.Done()
-	}()
+
+	}(&wg)
 
 	if err := s.Serve(lis); err != nil {
 		S.logger.Logger.Sugar().Fatal("failed to serve: %v", err)
