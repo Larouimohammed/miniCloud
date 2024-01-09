@@ -60,7 +60,7 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	// S.ctx = context.WithValue(ctx, "containerName", config.Containername)
 	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN", config.Containername, "Image", config.Image, "Numofinstance", config.Nunofinstance)
 	defer S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, config.Command, config.InstallWithAnsible, S.logger, S.consulClient); err != nil {
+	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient); err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
@@ -89,7 +89,7 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	if err := command.StopandDropContainer(S.cli, config.Containername, instance); err != nil {
 		S.logger.Logger.Sugar().Error(" droping infra  error  %v", err)
 	}
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.Nunofinstance, config.Command, config.InstallWithAnsible, S.logger, S.consulClient); err != nil {
+	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient); err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning error  %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
@@ -111,7 +111,7 @@ func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 
 		for {
 			msgs, serrs := S.cli.Events(S.ctx, types.EventsOptions{})
-            select {
+			select {
 			case msg := <-msgs:
 				err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: ""})
 				if err != nil {

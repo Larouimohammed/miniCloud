@@ -35,7 +35,7 @@ func main() {
 	if os.Args[1] == "apply" {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Timeout)*time.Second)
 		defer cancel()
-		r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas, Command: config.Command, InstallWithAnsible: config.InstallWithAnsible})
+		r, err := c.Apply(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas, Command: config.Command, AnsiblePlaybookPath: config.AnsiblePlaybookPath})
 		if err != nil {
 			log.Printf("Server can't provisionning infra: %v ", err)
 
@@ -54,7 +54,7 @@ func main() {
 	if os.Args[1] == "update" {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Timeout)*time.Second)
 		defer cancel()
-		u, err := c.Update(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas, Command: config.Command, InstallWithAnsible: config.InstallWithAnsible})
+		u, err := c.Update(ctx, &pb.Req{Containername: config.Containername, Image: config.Image, Subnet: config.Subnet, Nunofinstance: config.Replicas, Command: config.Command, AnsiblePlaybookPath: config.AnsiblePlaybookPath})
 		if err != nil {
 			log.Printf("Server can't Update infra  : %v ", err)
 		}

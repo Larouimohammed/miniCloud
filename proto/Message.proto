@@ -7,7 +7,7 @@ message Req {
     string subnet = 3;
     int32  nunofinstance = 4;
     repeated string command = 5;
-    repeated string installWithAnsible = 6;
+    string ansiblePlaybookPath = 6;
 
 
 }

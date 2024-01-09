@@ -12,12 +12,12 @@ const (
 )
 
 type Config struct {
-	Containername      string   `yaml:"containername"`
-	Image              string   `yaml:"image"`
-	Subnet             string   `yaml:"subnet"`
-	Replicas           int32    `yaml:"replicas"`
-	Command            []string `yaml:"command"`
-	InstallWithAnsible []string `yaml:"Installwithansible"`
+	Containername       string   `yaml:"containername"`
+	Image               string   `yaml:"image"`
+	Subnet              string   `yaml:"subnet"`
+	Replicas            int32    `yaml:"replicas"`
+	Command             []string `yaml:"command"`
+	AnsiblePlaybookPath string   `yaml:"ansiblePlaybookPath"`
 }
 
 func (C *Config) Goyaml(pathfile string) *Config {
