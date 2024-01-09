@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+
 	log "github.com/Larouimohammed/miniCloud.git/logger"
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	"github.com/docker/docker/api/types"
@@ -12,7 +13,7 @@ import (
 	cli "github.com/docker/docker/client"
 )
 
-func ProvApply(cli *cli.Client, containername, image, subnet,installWithAnsible string, numberofistance int32, command []string, log log.Log, consulproxy *consul.ConsulProxy) error {
+func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible string, numberofistance int32, command []string, log log.Log, consulproxy *consul.ConsulProxy) error {
 	ctx := context.Background()
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
@@ -42,7 +43,8 @@ func ProvApply(cli *cli.Client, containername, image, subnet,installWithAnsible 
 
 		}
 		// ruu ansible install
-		// ansible.RunAnsible("myplay", subnet)
+
+		// ansible.RunAnsible(installWithAnsible, "", log)
 
 		// consul service register
 		go func(j int) {

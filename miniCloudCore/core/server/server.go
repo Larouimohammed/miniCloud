@@ -4,18 +4,19 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-	"net"
 	t "time"
+
 	log "github.com/Larouimohammed/miniCloud.git/logger"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/ansible"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
-	"github.com/docker/docker/api/types"
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"google.golang.org/grpc"
 )
@@ -25,6 +26,7 @@ var (
 )
 
 type Server struct {
+	wg  *sync.WaitGroup
 	cli *client.Client
 	pb.UnimplementedProvServer
 	logger       log.Log
@@ -32,6 +34,7 @@ type Server struct {
 }
 
 func NewServer() *Server {
+	wg := &sync.WaitGroup{}
 	consulClient := consul.DefaultConsulProxy
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	logger := log.Newlogger()
@@ -41,6 +44,7 @@ func NewServer() *Server {
 	}
 	// defer client.Close()
 	return &Server{
+		wg:           wg,
 		cli:          client,
 		logger:       *logger,
 		consulClient: consulClient,
@@ -53,13 +57,11 @@ var DefaultServer = NewServer()
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN", config.Containername, "Image", config.Image, "Numofinstance", config.Nunofinstance)
-	defer S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
 	err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient)
 	if err != nil {
 		S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
-	S.logger.Logger.Sugar().Infow("Ansible Path", "ansible Path", config.AnsiblePlaybookPath)
 
 	if config.AnsiblePlaybookPath != "" {
 		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
@@ -68,24 +70,25 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 			return &pb.Resp{Resp: "Ansible install error"}, err
 		}
 	}
+	S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
+
 	return &pb.Resp{Resp: t.Now().String()}, nil
 }
 
 // droping
 func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Droping infra Starting", "CN", config.Containername, "Numofinstance", config.Nunofinstance)
-	defer S.logger.Logger.Sugar().Infow("Droping infra complete successfully")
 	if err := command.StopandDropContainer(S.cli, config.Containername, config.Nunofinstance); err != nil {
 		S.logger.Logger.Sugar().Error(" droping infra  error %v", err)
 	}
 
+	S.logger.Logger.Sugar().Infow("Droping infra complete successfully")
 	return &pb.Resp{Resp: t.Now().String()}, nil
 }
 
 // updating
 func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Updating infra Starting")
-	defer S.logger.Logger.Sugar().Infow("Updating infra complete successfully")
 	instance, err := command.GetInstance(ctx, S.cli, config.Containername, S.logger)
 	if err != nil {
 		S.logger.Logger.Sugar().Error("number of instance is indectectible  %v", err)
@@ -98,7 +101,6 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
 	}
-	S.logger.Logger.Sugar().Infow(config.AnsiblePlaybookPath)
 	if config.AnsiblePlaybookPath != "" {
 		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
 			S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
@@ -106,6 +108,7 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 			return &pb.Resp{Resp: "Ansible install error"}, err
 		}
 	}
+	S.logger.Logger.Sugar().Infow("Updating infra complete successfully")
 	return &pb.Resp{Resp: t.Now().String()}, nil
 
 }
@@ -114,8 +117,8 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 	S.logger.Logger.Sugar().Infow("Watching of infra Starting", config.Containername)
 	defer S.logger.Logger.Sugar().Infow("Watching of infra shuting", config.Containername)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	// wg := sync.WaitGroup{}
+	S.wg.Add(1)
 
 	go func(wg *sync.WaitGroup) {
 
@@ -139,8 +142,8 @@ func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 			}
 
 		}
-	}(&wg)
-	wg.Wait()
+	}(S.wg)
+	S.wg.Wait()
 	return nil
 }
 
@@ -158,30 +161,28 @@ func (S *Server) Run() {
 	sigCh := make(chan os.Signal, 1)
 	/*  when sigCh channel gets a signal notify me */
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-	wg := sync.WaitGroup{}
 	go func(wg *sync.WaitGroup) {
 		wg.Add(1)
 		defer wg.Done()
 		sig := <-sigCh
 		S.CloseServer(s, sig)
 
-	}(&wg)
+	}(S.wg)
 
 	if err := s.Serve(lis); err != nil {
 		S.logger.Logger.Sugar().Fatal("failed to serve: %v", err)
 
 	}
-	wg.Wait()
+	S.wg.Wait()
 }
 
 func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
 	defer s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 	s.logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
-
+	grpcserver.GracefulStop()
 	if err := s.cli.Close(); err != nil {
 		s.logger.Logger.Sugar().Error(err)
 
 	}
-	grpcserver.GracefulStop()
 
 }

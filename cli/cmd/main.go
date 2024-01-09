@@ -40,7 +40,7 @@ func main() {
 			log.Printf("Server can't provisionning infra: %v ", err)
 
 		}
-		log.Printf("Your infra %v provisioned at : %s", config.Containername, r.Resp)
+		log.Printf("Your infra %v was provisioned at : %s", config.Containername, r.Resp)
 	}
 	if os.Args[1] == "drop" {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Timeout)*time.Second)
