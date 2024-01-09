@@ -8,14 +8,12 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-
 	"net"
 	t "time"
-
 	log "github.com/Larouimohammed/miniCloud.git/logger"
+	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/ansible"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
 	"github.com/docker/docker/api/types"
-
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/client"
@@ -27,7 +25,6 @@ var (
 )
 
 type Server struct {
-	ctx context.Context
 	cli *client.Client
 	pb.UnimplementedProvServer
 	logger       log.Log
@@ -35,7 +32,6 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	ctx := context.Background()
 	consulClient := consul.DefaultConsulProxy
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	logger := log.Newlogger()
@@ -48,7 +44,6 @@ func NewServer() *Server {
 		cli:          client,
 		logger:       *logger,
 		consulClient: consulClient,
-		ctx:          ctx,
 	}
 
 }
@@ -57,12 +52,21 @@ var DefaultServer = NewServer()
 
 // provisioning
 func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
-	// S.ctx = context.WithValue(ctx, "containerName", config.Containername)
 	S.logger.Logger.Sugar().Infow("Provisionning infra Starting", "CN", config.Containername, "Image", config.Image, "Numofinstance", config.Nunofinstance)
 	defer S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient); err != nil {
-		S.logger.Logger.Sugar().Error(" provisionning error %v", err)
+	err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient)
+	if err != nil {
+		S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
+	}
+	S.logger.Logger.Sugar().Infow("Ansible Path", "ansible Path", config.AnsiblePlaybookPath)
+
+	if config.AnsiblePlaybookPath != "" {
+		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
+			S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
+
+			return &pb.Resp{Resp: "Ansible install error"}, err
+		}
 	}
 	return &pb.Resp{Resp: t.Now().String()}, nil
 }
@@ -94,6 +98,14 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
 	}
+	S.logger.Logger.Sugar().Infow(config.AnsiblePlaybookPath)
+	if config.AnsiblePlaybookPath != "" {
+		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
+			S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
+
+			return &pb.Resp{Resp: "Ansible install error"}, err
+		}
+	}
 	return &pb.Resp{Resp: t.Now().String()}, nil
 
 }
@@ -110,7 +122,7 @@ func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 		defer wg.Done()
 
 		for {
-			msgs, serrs := S.cli.Events(S.ctx, types.EventsOptions{})
+			msgs, serrs := S.cli.Events(context.Background(), types.EventsOptions{})
 			select {
 			case msg := <-msgs:
 				err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: ""})
@@ -133,9 +145,6 @@ func (S *Server) Watch(config *pb.WReq, stream pb.Prov_WatchServer) error {
 }
 
 func (S *Server) Run() {
-	// /ctx := context.Background()
-	// containerName, _ := S.ctx.Value("containerName").(string)
-	// ctx := context.WithValue(S.ctx, "containerName", containerName)
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
@@ -174,10 +183,5 @@ func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
 
 	}
 	grpcserver.GracefulStop()
-	// containerName:=ctx.Value()
-	// contanerName, _ := ctx.Value("containerName").(string)
-	// if err := s.consulClient.Cli.Agent().ServiceDeregister(contanerName); err != nil {
-	// 	s.logger.Logger.Sugar().Error("Deregister error", "err", err)
-	// }
 
 }

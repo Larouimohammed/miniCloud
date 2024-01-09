@@ -1,11 +1,9 @@
 #dont write container nimae with integer we must fix that
-containername: laroui
+containername: hostname
 image: nginx
 subnet: 172.17.0.1/16
-replicas: 3
+replicas: 2
 command :
     - sleep
     - 1200
-installwithansible:
-    - httpd
-    - dsgfdsgfsd
+ansiblePlaybookPath: /home/ubuntu/miniCloud/miniCloud/miniCloudCore/core/ansible/ansible.yml

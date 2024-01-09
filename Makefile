@@ -23,12 +23,23 @@ consulinstall:
 	@ go get github.com/hashicorp/consul/api
 
 
-dockersdk:
+ansibleinstall:
+    
+	@ sudo apt install ansible 
+    
+	@  go get github.com/febrianrendak/go-ansible
 
+
+
+dockersdk:
+    
+	@ sudo apt install docker.io
+	
 	@ go get github.com/docker/docker/client
 
 grpcconfig :
 	@ apt install -y protobuf-compiler			
+	
 	@ go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
  	
 	@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 \
