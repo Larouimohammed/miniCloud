@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app 
+      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app:khero1234/minicloud-app 
 
       
   deploy:
