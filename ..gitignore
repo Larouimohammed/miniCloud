@@ -1,5 +1,6 @@
 # ignore file
 tmp/
+bin/
 # ignore file.gitignore
 ..gitignore
 # ignore .github/
