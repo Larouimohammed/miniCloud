@@ -11,6 +11,7 @@ import (
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/consulproxy"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
 	cli "github.com/docker/docker/client"
 )
 
@@ -35,8 +36,11 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 			AttachStdin:     true,
 			AttachStdout:    true,
 			AttachStderr:    true,
-			Healthcheck:     &container.HealthConfig{Test: consulproxy.Cli.Headers()[containername+fmt.Sprint(i)]},
-		}, &container.HostConfig{PublishAllPorts: true, Privileged: false}, nil, nil, containername+fmt.Sprint(i))
+			// Healthcheck:     &container.HealthConfig{Test: consulproxy.Cli.Headers()[containername+fmt.Sprint(i)]},
+		}, &container.HostConfig{
+			PublishAllPorts: true,
+			Privileged:      false,
+		}, &network.NetworkingConfig{}, nil, containername+fmt.Sprint(i))
 		if err != nil {
 			log.Logger.Sugar().Error("create  container failled: %v", err)
 
@@ -59,7 +63,7 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 		ips = append(ips, containerConfig.NetworkSettings.IPAddress)
 		// consul service register
 		go func(j int) {
-			if err := consulproxy.Start(containername+fmt.Sprint(j), resp.ID, "172.17.0.4", 80); err != nil {
+			if err := consulproxy.Start(containername+fmt.Sprint(j), resp.ID, containerConfig.NetworkSettings.IPAddress, 80); err != nil {
 
 				log.Logger.Sugar().Error("Service registred failled", err)
 

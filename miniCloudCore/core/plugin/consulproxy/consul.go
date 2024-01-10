@@ -60,16 +60,17 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 	check := &capi.AgentServiceCheck{
 		Name:                           "consul_check",
 		DeregisterCriticalServiceAfter: ttl.String(),
-		Shell:                          "/bin/bash",
+		// Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
 
-		// TTL:               ttl.String(),
+		TTL:               ttl.String(),
 		CheckID:                containerName,
 		DockerContainerID:      containerid,
 		FailuresBeforeCritical: 1,
 		SuccessBeforePassing:   1,
-		Interval:               "10s",
-		Args:                   []string{"sh", "-c"},
+		// HTTP:,
+		// Interval:               "10s",
+		// Args:                   []string{"sh", "-c"},
 		// Timeout:  "15s",
 	}
 
@@ -77,8 +78,8 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		ID:   containerName,
 		Name: containerName + " consul-proxy",
 		Tags: []string{containerid},
-		// Address: ip,
-		// Port:    port,
+		Address: ip,
+		Port:    port,
 		Check: check,
 	}
 
