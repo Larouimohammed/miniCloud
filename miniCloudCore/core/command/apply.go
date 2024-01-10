@@ -16,7 +16,7 @@ import (
 
 func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsiblePath string, numberofistance int32, command []string, log log.Log, consulproxy *consul.ConsulProxy) error {
 	ctx := context.Background()
-	var IP []string
+	var ips []string
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
 
@@ -57,7 +57,7 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 			return err
 		}
 		ip := containerConfig.NetworkSettings.IPAddress
-		IP = append(IP, ip)
+		ips = append(ips, ip)
 		// consul service register
 		go func(j int) {
 			if err := consulproxy.Start(containername+fmt.Sprint(j), resp.ID, "172.17.0.4", 80); err != nil {
@@ -70,7 +70,7 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 	}
 	// ruu ansible install
 	if installWithAnsiblePath != "" {
-		if err := ansible.RunAnsible(installWithAnsiblePath, IP, log); err != nil {
+		if err := ansible.RunAnsible(installWithAnsiblePath, ips, log); err != nil {
 			log.Logger.Sugar().Error("Ansible with install error %v", err)
 
 			return err

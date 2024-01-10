@@ -9,8 +9,6 @@ import (
 	ansible "github.com/febrianrendak/go-ansible"
 )
 
-const DefauttPathInventory = "./inventory"
-
 type Executor interface {
 	Execute(command string, args []string, prefix string) error
 }
@@ -32,11 +30,9 @@ func RunAnsible(AnsiblePlaybookPath string, inventory []string, log log.Log) err
 		// Become:        true,
 		// AskBecomePass: true,
 	}
-	strings.Join(inventory, ",")
+	strInventory := strings.Join(inventory, ",")
 	ansiblePlaybookOptions := &ansible.AnsiblePlaybookOptions{
-		Inventory: "172.17.0.4,172.17.0.5",
-
-		// "192.168.1.103,",
+		Inventory: strInventory,
 	}
 	playbook := &ansible.AnsiblePlaybookCmd{
 		Playbook:                   AnsiblePlaybookPath,
