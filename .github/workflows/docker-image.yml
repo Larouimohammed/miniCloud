@@ -22,7 +22,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
        - name: push image to docker hub
-         run: docker images && docker login -u khero1234 -p loginmymind88 && sudo docker push khero1234/minicloud-app
+         run: docker images && docker login -u khero1234 -p loginmymind88 &&docker push khero1234/minicloud-app
 
         #  run: docker push khero1234/minicloud-app
 
