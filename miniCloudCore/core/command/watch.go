@@ -66,35 +66,3 @@ func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log
 	return int32(instance), nil
 
 }
-
-// func Watching(cli *client.Client, containername string, log log.Log) {
-// wg := sync.WaitGroup{}
-// wg.Add(1)
-// go func() {
-// 	for {
-// 		msgs, serrs := cli.Events(, types.EventsOptions{})
-
-// 		select {
-// 		case msg := <-msgs:
-// 			log.Logger.Sugar().Info(msg)
-
-// 			err := stream.Send(&pb.WResp{Wresp: fmt.Sprintf("%+v", msg), Werr: ""})
-// 			if err != nil {
-// 				S.logger.Logger.Sugar().Error(err)
-// 				return err
-// 			}
-// 		case errs := <-serrs:
-// 			S.logger.Logger.Sugar().Error(errs)
-
-// 			err := stream.Send(&pb.WResp{Wresp: "", Werr: errs.Error()})
-// 			if err != nil {
-// 				S.logger.Logger.Sugar().Error(err)
-// 				return err
-// 			}
-
-// 		}
-
-// 	}
-// }()
-// wg.Wait()
-// }

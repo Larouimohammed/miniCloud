@@ -76,6 +76,5 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 			return err
 		}
 	}
-	// ansible.RunAnsible(installWithAnsible, IP, log)
 	return nil
 }
