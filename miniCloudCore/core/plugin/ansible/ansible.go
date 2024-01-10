@@ -2,6 +2,7 @@ package ansible
 
 import (
 	"fmt"
+	"strings"
 
 	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 
@@ -20,7 +21,7 @@ func (e *MyExecutor) Execute(command string, args []string, prefix string) error
 
 	return nil
 }
-func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
+func RunAnsible(AnsiblePlaybookPath string, inventory []string, log log.Log) error {
 
 	ansiblePlaybookConnectionOptions := &ansible.AnsiblePlaybookConnectionOptions{
 		AskPass:    false,
@@ -31,6 +32,7 @@ func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
 		// Become:        true,
 		// AskBecomePass: true,
 	}
+	strings.Join(inventory, ",")
 	ansiblePlaybookOptions := &ansible.AnsiblePlaybookOptions{
 		Inventory: "172.17.0.4,172.17.0.5",
 

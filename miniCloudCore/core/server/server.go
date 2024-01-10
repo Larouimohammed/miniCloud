@@ -13,7 +13,6 @@ import (
 
 	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
-	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/ansible"
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/consulproxy"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/api/types"
@@ -62,14 +61,6 @@ func (S *Server) Apply(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 		S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 	}
-
-	if config.AnsiblePlaybookPath != "" {
-		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
-			S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
-
-			return &pb.Resp{Resp: "Ansible install error"}, err
-		}
-	}
 	S.logger.Logger.Sugar().Infow("Provisionning infra complete successfully")
 
 	return &pb.Resp{Resp: t.Now().String()}, nil
@@ -100,13 +91,6 @@ func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 		S.logger.Logger.Sugar().Error(" provisionning error  %v", err)
 		return &pb.Resp{Resp: "provisionning infra error"}, err
 
-	}
-	if config.AnsiblePlaybookPath != "" {
-		if err := ansible.RunAnsible(config.AnsiblePlaybookPath, "", S.logger); err != nil {
-			S.logger.Logger.Sugar().Error(" provisionning infara error %v", err)
-
-			return &pb.Resp{Resp: "Ansible install error"}, err
-		}
 	}
 	S.logger.Logger.Sugar().Infow("Updating infra complete successfully")
 	return &pb.Resp{Resp: t.Now().String()}, nil
