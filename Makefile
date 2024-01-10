@@ -31,7 +31,7 @@ ansibleinstall:
 
 
 
-dockersdk:
+dockerinstall:
     
 	@ sudo apt install docker.io
 	
@@ -53,3 +53,4 @@ goconfig:
     
 	@ source ~/.bashrc
 	@ source ~/.profile
+# install: grpcconfig,dockersdk,ansibleinstall,consulinstall
