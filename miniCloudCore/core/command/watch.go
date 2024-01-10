@@ -44,24 +44,7 @@ func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log
 			}
 
 		}
-		// 	statusCh, errCh := cli.ContainerWait(context.Background(), l.ID, container.WaitConditionNotRunning)
-		// 	select {
-		// 	case err := <-errCh:
-		// 		if err != nil {
-		// 			log.Logger.Sugar().Error(err.Error())
-		// 		}
-		// 	case <-statusCh:
-		// 	}
-
-		// 	out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true})
-
-		// 	_, err = stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-		// 	if err != nil {
-		// 		log.Logger.Sugar().Error(err.Error())
-		// 	}
-
-		// }
-
+		
 	}
 	return int32(instance), nil
 
