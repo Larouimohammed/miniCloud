@@ -9,12 +9,11 @@ import (
 
 const (
 	ttl = time.Second * 8
-	// CheckID = "check_health"
+
 )
 
 type ConsulProxy struct {
 	Cli *capi.Client
-	// cancel context.CancelFunc
 }
 
 // Get a new client
@@ -58,7 +57,7 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) error {
 func (P *ConsulProxy) registerService(containerName, containerid, ip string, port int) error {
 
 	check := &capi.AgentServiceCheck{
-		Name:                           "consul_check",
+		Name:                           "consul_check_of:"+containerName,
 		DeregisterCriticalServiceAfter: ttl.String(),
 		// Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
