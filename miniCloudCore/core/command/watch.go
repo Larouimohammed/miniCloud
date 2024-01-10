@@ -30,7 +30,10 @@ func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log
 			if cn == cnn {
 				instance++
 				out, err := cli.ContainerLogs(context.Background(), l.ID, types.ContainerLogsOptions{ShowStdout: true, Details: true})
+				if err != nil {
+					log.Logger.Sugar().Error(err.Error())
 
+				}
 				_, err = io.Copy(os.Stdout, out)
 
 				if err != nil {

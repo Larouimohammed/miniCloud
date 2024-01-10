@@ -1,4 +1,4 @@
-package command
+package consul
 
 import (
 	"log"
@@ -45,13 +45,11 @@ func (P *ConsulProxy) updatehealthcheck(containerName string) error {
 
 	ticker := time.NewTicker(time.Second * 5)
 	for {
-		select {
-		case <-ticker.C:
 
-			if err := P.Cli.Agent().UpdateTTL(containerName, "pass", capi.HealthPassing); err != nil {
-				return err
-			}
+		<-ticker.C
 
+		if err := P.Cli.Agent().UpdateTTL(containerName, "pass", capi.HealthPassing); err != nil {
+			return err
 		}
 
 	}
@@ -65,23 +63,23 @@ func (P *ConsulProxy) registerService(containerName, containerid, ip string, por
 		Shell:                          "/bin/bash",
 		TLSSkipVerify:                  true,
 
-		// TTL:                    ttl.String(),
-		CheckID:           containerName,
-		DockerContainerID: containerid,
-		// FailuresBeforeCritical: 1,
-		// SuccessBeforePassing:   1,
-		Interval: "10s",
-		Args:     []string{"sh", "-c"},
-		Timeout:  "15s",
+		// TTL:               ttl.String(),
+		CheckID:                containerName,
+		DockerContainerID:      containerid,
+		FailuresBeforeCritical: 1,
+		SuccessBeforePassing:   1,
+		Interval:               "10s",
+		Args:                   []string{"sh", "-c"},
+		// Timeout:  "15s",
 	}
 
 	register := &capi.AgentServiceRegistration{
-		ID:      containerName,
-		Name:    containerName + " consul-proxy",
-		Tags:    []string{containerid},
-		Address: ip,
-		Port:    port,
-		Check:   check,
+		ID:   containerName,
+		Name: containerName + " consul-proxy",
+		Tags: []string{containerid},
+		// Address: ip,
+		// Port:    port,
+		Check: check,
 	}
 
 	err := P.Cli.Agent().ServiceRegisterOpts(register, capi.ServiceRegisterOpts{ReplaceExistingChecks: true})

@@ -12,9 +12,9 @@ import (
 	t "time"
 
 	log "github.com/Larouimohammed/miniCloud.git/logger"
-	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/ansible"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
-	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
+	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/ansible"
+	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/consulproxy"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -161,8 +161,8 @@ func (S *Server) Run() {
 	sigCh := make(chan os.Signal, 1)
 	/*  when sigCh channel gets a signal notify me */
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	S.wg.Add(1)
 	go func(wg *sync.WaitGroup) {
-		wg.Add(1)
 		defer wg.Done()
 		sig := <-sigCh
 		S.CloseServer(s, sig)
@@ -177,12 +177,11 @@ func (S *Server) Run() {
 }
 
 func (s *Server) CloseServer(grpcserver *grpc.Server, sig os.Signal) {
-	defer s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 	s.logger.Logger.Sugar().Infow("shutdow starting", "signal", sig)
 	grpcserver.GracefulStop()
 	if err := s.cli.Close(); err != nil {
 		s.logger.Logger.Sugar().Error(err)
 
 	}
-
+	s.logger.Logger.Sugar().Infow("shutdow complete", "signal", sig)
 }

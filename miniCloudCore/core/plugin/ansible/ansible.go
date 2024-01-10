@@ -60,6 +60,3 @@ func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
 	return nil
 }
 
-//  func main() {
-// 	RunAnsible("/home/ubuntu/miniCloud/miniCloud/miniCloudCore/core/ansible/ansible.yml", "172.17.04",*log.Newlogger())
-//  }

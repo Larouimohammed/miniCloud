@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/consulproxy"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
-
-var c *consul.ConsulProxy
 
 func StopandDropContainer(cli *client.Client, containername string, numberofistance int32) error {
 	ctx := context.Background()

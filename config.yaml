@@ -6,4 +6,4 @@ replicas: 2
 command :
     - sleep
     - 1200
-ansiblePlaybookPath: /home/ubuntu/miniCloud/miniCloud/miniCloudCore/core/ansible/ansible.yml
+ansiblePlaybookPath: /home/ubuntu/miniCloud/miniCloud/ansiblePlaybook.yml
