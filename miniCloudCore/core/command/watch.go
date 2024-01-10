@@ -44,7 +44,7 @@ func GetInstance(ctx context.Context, cli *client.Client, cn string, log log.Log
 			}
 
 		}
-		
+
 	}
 	return int32(instance), nil
 
