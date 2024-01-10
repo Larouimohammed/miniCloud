@@ -7,32 +7,14 @@ on:
     branches: [ "master" ]
 
 jobs:
-
-  build:
+  BuildAndDeploy:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app && docker images && docker login -u khero1234 -p loginmymind88 &&docker push khero1234/minicloud-app
-
-
-      
-  # deploy:
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #      - name: push image to docker hub
-  #        run: docker images && docker login -u khero1234 -p loginmymind88 &&docker push khero1234/minicloud-app
-
-        #  run: docker push khero1234/minicloud-app
-
-        #  docker tag khero1234/minicloud-app khero1234/minicloud-app && docker push khero1234/minicloud-app
-          # docker push khero1234/minicloud-app:khero1234/minicloud-app
-         # docker tag local-image:khero1234/minicloud-app new-repo:khero1234/minicloud-app
-      # docker push new-repo:khero1234/minicloud-app
-
-
+    - name: Build and Deploy the Docker image in Docker hub
+      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app && docker push khero1234/minicloud-app
 
 
      
