@@ -15,12 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud_app
+      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app
+      
   deploy:
       runs-on: ubuntu-latest
       steps:
        - name: push image to docker hub
-         run:  docker push docker.io/khero1234/minicloud_app:khero1234/minicloud_app
+         run:  docker push khero1234/minicloud-app:khero1234/minicloud-app
+         # docker tag local-image:khero1234/minicloud-app new-repo:khero1234/minicloud-app
+      # docker push new-repo:khero1234/minicloud-app
 
 
 
