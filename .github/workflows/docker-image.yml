@@ -22,7 +22,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
        - name: push image to docker hub
-         run: docker push khero1234/minicloud-app
+         run: docker tag khero1234/minicloud-app khero1234/minicloud-app && docker push khero1234/minicloud-app
+        #  run: docker push khero1234/minicloud-app
 
         #  docker tag khero1234/minicloud-app khero1234/minicloud-app && docker push khero1234/minicloud-app
           # docker push khero1234/minicloud-app:khero1234/minicloud-app
