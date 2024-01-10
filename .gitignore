@@ -1,5 +1,5 @@
 # Other files and folders
 tmp
 .gitignore
-
+/home/ubuntu/miniCloud/miniCloud/.github/workflows
 
