@@ -6,7 +6,7 @@ import (
 	"os"
 	"regexp"
 
-	log "github.com/Larouimohammed/miniCloud.git/logger"
+	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"

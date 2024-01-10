@@ -11,7 +11,7 @@ import (
 	"syscall"
 	t "time"
 
-	log "github.com/Larouimohammed/miniCloud.git/logger"
+	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/command"
 	"github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/ansible"
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/consulproxy"

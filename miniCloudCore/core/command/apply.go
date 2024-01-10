@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	log "github.com/Larouimohammed/miniCloud.git/logger"
+	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 	consul "github.com/Larouimohammed/miniCloud.git/miniCloudCore/core/plugin/consulproxy"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"

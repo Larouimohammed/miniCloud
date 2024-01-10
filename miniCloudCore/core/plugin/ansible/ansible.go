@@ -3,7 +3,7 @@ package ansible
 import (
 	"fmt"
 
-	log "github.com/Larouimohammed/miniCloud.git/logger"
+	log "github.com/Larouimohammed/miniCloud.git/infra/logger"
 
 	ansible "github.com/febrianrendak/go-ansible"
 )
@@ -23,8 +23,8 @@ func (e *MyExecutor) Execute(command string, args []string, prefix string) error
 func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
 
 	ansiblePlaybookConnectionOptions := &ansible.AnsiblePlaybookConnectionOptions{
-		AskPass: false,
-		 Connection: "local",
+		AskPass:    false,
+		Connection: "local",
 	}
 
 	ansiblePlaybookPrivilegeEscalationOptions := &ansible.AnsiblePlaybookPrivilegeEscalationOptions{
@@ -32,7 +32,7 @@ func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
 		// AskBecomePass: true,
 	}
 	ansiblePlaybookOptions := &ansible.AnsiblePlaybookOptions{
-		Inventory: 		"172.17.0.4,172.17.0.5",
+		Inventory: "172.17.0.4,172.17.0.5",
 
 		// "192.168.1.103,",
 	}
@@ -59,4 +59,3 @@ func RunAnsible(AnsiblePlaybookPath, inventory string, log log.Log) error {
 	}
 	return nil
 }
-

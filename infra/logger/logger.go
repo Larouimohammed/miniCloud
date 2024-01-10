@@ -13,11 +13,11 @@ type Log struct {
 func Newlogger() *Log {
 	logger, err := zap.NewProduction()
 	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
+		log.Printf("can't initialize zap logger: %v", err)
 	}
 	defer logger.Sync()
 	return &Log{
 		Logger: logger,
 	}
-    
+
 }
