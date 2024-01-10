@@ -33,7 +33,7 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 			AttachStdin:     true,
 			AttachStdout:    true,
 			AttachStderr:    true,
-			// Healthcheck:     &container.HealthConfig{Test: consulproxy.Cli.Headers()[containername+fmt.Sprint(i)]},
+			Healthcheck:     &container.HealthConfig{Test: consulproxy.Cli.Headers()[containername+fmt.Sprint(i)]},
 		}, &container.HostConfig{PublishAllPorts: true, Privileged: false}, nil, nil, containername+fmt.Sprint(i))
 		if err != nil {
 			log.Logger.Sugar().Error("create  container failled: %v", err)
