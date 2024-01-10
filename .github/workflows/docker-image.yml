@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build and Deploy the Docker image in Docker hub
-      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app && docker push khero1234/minicloud-app
+      run: docker build . --file infra/docker/Dockerfile --tag khero1234/minicloud-app &&  docker login -u khero1234 -p kherokhero && docker push khero1234/minicloud-app
 
 
      
