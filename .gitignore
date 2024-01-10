@@ -1,2 +1,5 @@
-tmp/
-.gitignore
+# Other files and folders
+.tmp/
+
+
+
