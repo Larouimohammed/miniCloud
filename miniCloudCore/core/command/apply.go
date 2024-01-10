@@ -56,8 +56,7 @@ func ProvApply(cli *cli.Client, containername, image, subnet, installWithAnsible
 			log.Logger.Sugar().Error("Inspect container host IP failled: %v", err)
 			return err
 		}
-		ip := containerConfig.NetworkSettings.IPAddress
-		ips = append(ips, ip)
+		ips = append(ips, containerConfig.NetworkSettings.IPAddress)
 		// consul service register
 		go func(j int) {
 			if err := consulproxy.Start(containername+fmt.Sprint(j), resp.ID, "172.17.0.4", 80); err != nil {
