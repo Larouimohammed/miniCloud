@@ -13,7 +13,6 @@ provider "virtualbox" {
   mintimeout = 5
 }
 
-
 # There are currently no configuration options for the provider itself.
 resource "virtualbox_vm" "node" {
   count     = 2
