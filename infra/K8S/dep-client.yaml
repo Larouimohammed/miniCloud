@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miniCloudClient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: miniCloudClient
+  template:
+    metadata:
+      labels:
+        app: miniCloudClient
+    spec:
+      containers:
+        - name: miniCloudClientContainer
+          image: khero1234/minicloud-app-client
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
