@@ -1,4 +1,4 @@
-name: Docker Image Build and Test and Deploy
+name: Docker Image Build and Test and Deploy For MiniCloudApp
 
 on:
   push:
@@ -17,12 +17,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build and Test and Deploy the Docker image for Server in Docker hub
-      run: docker build . --file infra/docker/Dockerfile --tag ${{ env.Image_Server }} &&docker run --rm ${{ env.Image_Server }}  && docker login -u khero1234 -p kherokhero && docker push ${{ env.Image_Server }}
-    - name: Build and Test Deploy the Docker image for Client in Docker hub
-      run: docker build . --file infra/docker/dockerfile.client --tag ${{ env.Image_Client }} &&docker run --rm ${{ env.Image_Client }}  &&docker login -u khero1234 -p kherokhero && docker push ${{ env.Image_Client }}
-    
-     
+    - name: Build and Deploy the Docker Image for Server in Docker hub
+      run: docker build . --file infra/docker/Dockerfile --tag ${{ env.Image_Server }} &&docker login -u khero1234 -p kherokhero && docker push ${{ env.Image_Server }}
+    - name: Build and Deploy the Docker Image for Client in Docker hub
+      run: docker build . --file infra/docker/dockerfile.client --tag ${{ env.Image_Client }} &&docker login -u khero1234 -p kherokhero && docker push ${{ env.Image_Client }}
+    - name: Test MiniCloud Server Image 
+      run: docker run --rm ${{ env.Image_Server }}  
+    - name: Test MiniCloud Client Image 
+      run: docker run --rm ${{ env.Image_Client }}   
      
 
    
