@@ -1,4 +1,3 @@
-
 terraform {
   required_providers {
     virtualbox = {
@@ -15,7 +14,7 @@ provider "virtualbox" {
 
 # There are currently no configuration options for the provider itself.
 resource "virtualbox_vm" "node" {
-  count     = 2
+  count     = 1
   name      = format("node-%02d", count.index + 1)
   image     = "https://app.vagrantup.com/shekeriev/boxes/debian-11/versions/0.2/providers/virtualbox.box"
   cpus      = 1
