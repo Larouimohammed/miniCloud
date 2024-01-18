@@ -80,18 +80,12 @@ func (S *Server) Drop(ctx context.Context, config *pb.DReq) (*pb.Resp, error) {
 // updating
 func (S *Server) Update(ctx context.Context, config *pb.Req) (*pb.Resp, error) {
 	S.logger.Logger.Sugar().Infow("Updating infra Starting")
-	instance, err := command.GetInstance(ctx, S.cli, config.Containername, S.logger)
-	if err != nil {
-		S.logger.Logger.Sugar().Error("number of instance is indectectible  %v", err)
-	}
-	if err := command.StopandDropContainer(S.cli, config.Containername, instance); err != nil {
-		S.logger.Logger.Sugar().Error(" droping infra  error  %v", err)
-	}
-	if err := command.ProvApply(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient); err != nil {
-		S.logger.Logger.Sugar().Error(" provisionning error  %v", err)
-		return &pb.Resp{Resp: "provisionning infra error"}, err
 
+	if err := command.Update(S.cli, config.Containername, config.Image, config.Subnet, config.AnsiblePlaybookPath, config.Nunofinstance, config.Command, S.logger, S.consulClient); err != nil {
+		S.logger.Logger.Sugar().Error("Updating infra error")
+		return &pb.Resp{Resp: t.Now().String()}, err
 	}
+
 	S.logger.Logger.Sugar().Infow("Updating infra complete successfully")
 	return &pb.Resp{Resp: t.Now().String()}, nil
 
