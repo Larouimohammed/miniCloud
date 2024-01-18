@@ -3,7 +3,7 @@ FROM golang:latest
 RUN mkdir /build
 COPY ./cli  /build/
 WORKDIR /build
-RUN CGO_ENABLED=0 GOOS=linux go build -o bin/client  cli/cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o bin/client  /cmd/main.go
 
 # generate clean, final image for end users
 
