@@ -8,19 +8,25 @@ terraform {
   }
 }
 
-provider "virtualbox" {
-  delay      = 60
-  mintimeout = 5
-}
+# provider "virtualbox" {
+#   delay      = 60
+#   mintimeout = 15
+# }
 
 # There are currently no configuration options for the provider itself.
+
+module "talos_vbox-network" {
+  source  = "masoudbahar/talos/virtualbox//modules/vbox-network"
+  version = "0.1.0"
+}
 resource "virtualbox_vm" "node" {
-  count     = 1
-  name      = format("node-%02d", count.index + 1)
-  image     = "https://app.vagrantup.com/shekeriev/boxes/debian-11/versions/0.2/providers/virtualbox.box"
-  cpus      = 1
-  memory    = "512 mib"
-  user_data = file("user_data")
+
+  count  = 1
+  name   = format("node-%02d", count.index + 1)
+  image  = "https://app.vagrantup.com/shekeriev/boxes/debian-11/versions/0.2/providers/virtualbox.box"
+  cpus   = 1
+  memory = "512 mib"
+  # user_data = file("user_data")
 
 
   network_adapter {

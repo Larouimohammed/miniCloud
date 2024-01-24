@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Larouimohammed/miniCloud.git/cli/config"
+	"github.com/Larouimohammed/miniCloud.git/cliClient/config"
 	pb "github.com/Larouimohammed/miniCloud.git/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
