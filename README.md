@@ -1,7 +1,5 @@
 #
-MiniCloud it is a infrastructure as container App for provisionnig and updating and watching and droping your infra it use  consul service discoverry and registration and it can accept ansible playbook path
-to run with in each containner in infra,client should interact with miniCloudCore using CLI and a config file.  
-#
+MiniCloud it 's a infrastructure as container (IAC) App for provisionnig and updating and watching and droping your infra it use terraform for setup a cluster of master and worker node and consul for container microservices discoverry and registration and it can accept ansible playbook path to run with in each container in infra,client should interact with miniCloudCore using CLI and a config file.
 Dependencies:GRPC,golang dockerAPI client,consul API client,ansible go client.
 #
 Install:
